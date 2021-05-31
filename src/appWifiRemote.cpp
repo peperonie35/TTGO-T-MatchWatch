@@ -7,7 +7,7 @@ DisplaySate disp_state;
 uint32_t last_update = 0;
 int nb_load_pt = 0;
 
-const String api_url = "http://91.167.236.217:32000/api";
+const String api_url = "api_url";
 const String api_key = "there_is_no_key_yet";
 
 const char*wifiRemoteLabels[] = {
