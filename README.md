@@ -1,4 +1,4 @@
-# TTGO-T-MatchWatch
+# MatchWatch
 This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a software for the TTGO T-watch 2020 v1
 
 How to use ? 
