@@ -1,8 +1,8 @@
 #include "config.h"
 #include "MWatch.h"
 
-int disp_update_time;
-bool need_wifi = false;
+static int disp_update_time;
+static bool need_wifi = false;
 
 void appBasicRequest(AppState s) {
   handle_wifi_for_app(s, need_wifi);

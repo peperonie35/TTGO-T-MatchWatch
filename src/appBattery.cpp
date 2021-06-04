@@ -1,9 +1,9 @@
 #include "config.h"
 #include "MWatch.h"
 
-uint32_t batt_update_time;
-int16_t x, y, per;
-float vbus_v, vbus_c, batt_v;
+static uint32_t batt_update_time;
+static int16_t x, y, per;
+static float vbus_v, vbus_c, batt_v;
 
 void appBattery(AppState s) {
   if (s == AppState::HANDLE) {

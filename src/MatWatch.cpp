@@ -10,6 +10,9 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <AceTime.h>
+#include <Arduino.h>
+#include "SPIFFS.h"
+#include "FS.h"
 
 #define __MAIN__
 
@@ -24,8 +27,9 @@ void setup() {
   Serial.begin(115200);
   Serial.print("booting MWatch . . . ");
   if (!SPIFFS.begin(true)) {
-    Serial.println(F("An Error has occurred while mounting SPIFFS"));
+    Serial.println("An Error has occurred while mounting SPIFFS");
   }
+
   pinMode(4, OUTPUT);
   quickBuzz();
   
@@ -105,15 +109,24 @@ void setup() {
 
   wifi_setup(); //setup wifi for use in app
 
-  has_handled_gesture = true;
-  //xTaskCreate(handleTouchTaskFunction, "touchTask", 10000, NULL, 1, NULL); //create a spearate task to allow touch in background (not working yet)
+
+  //attempt to make touch async
+  init_touch();
   
   current_app(AppState::INIT); // init the default app
   
   m_idle(); //reset last_activity to prevent screensaver_timeout at startup
 
+
+  //calling the setup for all apps
+  for(App app : Applications) {
+    app.app_ptr(SETUP);
+  }
+
   Serial.println();
   Serial.print("Setup finished");
+
+  watch_on = true;
 
 }
 
@@ -144,6 +157,7 @@ void loop() {
     }
     xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_EXIT);
     xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_MODE);
+    watch_on = true;
   }
   if ((bits & WATCH_FLAG_SLEEP_MODE)) {
     //! No event processing after entering the information screen
@@ -184,6 +198,7 @@ void loop() {
     current_gesture_handler(last_gesture);
     current_app(AppState::HANDLE);
    } else {
+    watch_on = false;
     Serial.println();
     Serial.print("screensaver_timeout bye !");
     low_energy();
@@ -197,6 +212,10 @@ void low_energy (void) {
     Serial.print("Entering light sleep mode.");
     xEventGroupSetBits(isr_group, WATCH_FLAG_SLEEP_MODE);
     current_app(AppState::DELETE);
+    current_app = &appClock;
+    defaultAppSwaperCurrentAppXPosition = 0;
+    defaultAppSwaperCurrentAppYPosition = 0;
+
     ttgo->closeBL();
     ttgo->stopLvglTick();
     ttgo->displaySleep();

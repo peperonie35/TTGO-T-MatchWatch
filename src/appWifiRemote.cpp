@@ -1,14 +1,16 @@
 #include "config.h"
 #include "MWatch.h"
 
-bool m_need_wifi = true;
-enum DisplaySate {LOADING = 1, MENU, REQUESTING, NO_WIFI};
-DisplaySate disp_state;
-uint32_t last_update = 0;
-int nb_load_pt = 0;
 
-const String api_url = "api_url";
-const String api_key = "there_is_no_key_yet";
+enum DisplaySate {LOADING = 1, MENU, REQUESTING, NO_WIFI};
+
+static DisplaySate disp_state;
+static uint32_t last_update = 0;
+static int nb_load_pt = 0;
+static bool m_need_wifi = true;
+
+static const String api_url = "ap_url";
+static const String api_key = "there_is_no_key_yet";
 
 const char*wifiRemoteLabels[] = {
     "light on", "", "light off",

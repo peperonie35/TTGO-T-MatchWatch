@@ -1,7 +1,6 @@
 #define LILYGO_WATCH_2020_V1              // Use T-Watch2020
 #define LILYGO_WATCH_LVGL 
 #include <LilyGoWatch.h>
-#define EEPROM_SIZE 512
 #ifndef LILYGO_WATCH_2020_V1
 #define STANDARD_BACKPLANE
 #else

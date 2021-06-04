@@ -5,9 +5,9 @@
 #define CLOCK_CASE TFT_DARKGREY
 #define CLOCK_FACE TFT_NAVY
 #define CLOCK_POINTER TFT_RED
-uint8_t clock_pointer = 0;
+static uint8_t clock_pointer = 0;
 // clock pointer positions
-uint8_t cp[9][4] {
+static uint8_t cp[9][4] {
     {120, 65, 112, 56},  // [0] 10h30
     {120, 65, 120, 54},  // [1] 12h00
     {120, 65, 128, 56},  // [2] 01h30
@@ -19,9 +19,9 @@ uint8_t cp[9][4] {
     {120, 65, 112, 56}   // [8] 10h30
 };
 
-bool running = false;
-uint32_t startingTime;
-uint32_t elapsedTime;
+static bool running = false;
+static uint32_t startingTime;
+static uint32_t elapsedTime;
 
 const char *stop_watch_meun_labels[] = { 
     "", "", "",

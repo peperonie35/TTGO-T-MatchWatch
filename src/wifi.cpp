@@ -7,7 +7,7 @@
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 
-bool m_wifi_on = false;
+static bool m_wifi_on = false;
 
 //makes a basic get http request and returns the result
 String make_http_get_request(String url) {

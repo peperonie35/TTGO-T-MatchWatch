@@ -3,19 +3,19 @@
 
 enum Operator{NONE = -1, ADD , SUB, DIV, MULT};
 
-const char *calc_keyboard_labels[] = {
+static const char *calc_keyboard_labels[] = {
     "7", "8", "9", "/",
     "4", "5", "6", "*",
     "1", "2", "3", "+",
     ".", "0", "-", "="
 };
 
-double current_num;
-double prev_num;
-bool in_decimal ;
-bool current_num_need_reset;
-int nb_decimal;
-Operator current_operator;
+static double current_num;
+static double prev_num;
+static bool in_decimal ;
+static bool current_num_need_reset;
+static int nb_decimal;
+static Operator current_operator;
 
 
 void disp_num(double num) {
