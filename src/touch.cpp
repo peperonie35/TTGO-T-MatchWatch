@@ -26,7 +26,6 @@ void enable_touch_features() {
 void init_touch() {
 }
 
-
 //allow to change the current app, but swiping right will go back to the previous app
 void stack_app(void (*app_to_stack)(AppState)) {
   app_stack.push_back(*current_app);

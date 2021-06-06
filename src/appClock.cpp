@@ -46,7 +46,6 @@ void drawDigitalClock(AppState s) {
   }
 }
 
-
 void appClock(AppState s) {
   drawDigitalClock(s);
   if (s == AppState::DELETE) {

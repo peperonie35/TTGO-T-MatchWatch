@@ -6,6 +6,7 @@
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
+#include <NTPClient.h>
 
 static bool m_wifi_on = false;
 
@@ -27,6 +28,21 @@ String make_http_get_request(String url) {
   return payload;
 }
 
+//request date from web and set the rtc date and to it, not done yet
+void set_rtc_time_from_web() {
+  WiFiUDP ntpUDP;
+  NTPClient timeClient(ntpUDP);
+  timeClient.begin();
+  timeClient.forceUpdate();
+  time_t rawtime = timeClient.getEpochTime();
+  struct tm *ti;
+  ti = localtime(&rawtime);
+  Serial.println();
+  Serial.print(timeClient.getFormattedTime());
+  ttgo->rtc->setDateTime(ti->tm_year + 1900, ti->tm_mon + 1, ti->tm_mday, ti->tm_hour, ti->tm_min, ti->tm_sec);
+  ttgo->rtc->syncToSystem();
+}
+
 //handle every wifi control stuff for an app,run in the app to enable wifi for the app, put nee_wifi to false when wifi is not needed to reduce power consumption
 void handle_wifi_for_app(AppState s, bool need_wifi) {
   if (s == AppState::INIT) {
@@ -42,6 +58,9 @@ void handle_wifi_for_app(AppState s, bool need_wifi) {
   } else if (s == AppState::DELETE) {
     turn_off_wifi();
     m_wifi_on = false;
+  } else if(s == AppState::HANDLE && need_wifi && !m_wifi_on) {
+    m_wifi_on = true;
+    begin_network_scan();
   }
   if (!need_wifi && m_wifi_on == true) {
     m_wifi_on = false;
@@ -91,7 +110,6 @@ void wifi_setup() {
   WiFi.mode(WIFI_OFF);
   WiFi.onEvent(WifiEventHandler);
 }
-
 
 //start the network scan (non-blocking)
 void begin_network_scan() {

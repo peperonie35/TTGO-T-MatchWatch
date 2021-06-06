@@ -17,7 +17,6 @@ static bool current_num_need_reset;
 static int nb_decimal;
 static Operator current_operator;
 
-
 void disp_num(double num) {
     tft->fillRect(0, 5, 240, 20, TFT_BLACK);
     tft->drawString(String(num), 5, 5, 4);

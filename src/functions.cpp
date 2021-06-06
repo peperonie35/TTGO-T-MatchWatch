@@ -45,11 +45,6 @@ void disable_rtc_alarm(void) {
   Serial.println(F("disable_rtc_alarm()"));
 }
 
-//request date from web and set the rtc date and to it, not done yet
-void set_rtc_time_from_web() {
-  
-}
-
 //return current date using the rtc and the m_tz time zone
 Date getDate(uint32_t tz) {
   Date tt;
@@ -135,7 +130,6 @@ void flash_keyboard_item (uint8_t num_keys, const char **b_labels, uint8_t font,
   ttgo->tft->fillRoundRect(xvals[col], yvals[row], 75, yh-5, 6, icolor);
   ttgo->tft->drawCentreString(b_labels[ino], xtvals[col], yvals[row]+5, font);
 }
-
 
 void flash_keyboard_item_txt (uint8_t num_keys, String text, uint8_t font, bool leave_room_for_label, int row, int col) {
   uint8_t yvals[4], yh;
