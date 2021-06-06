@@ -138,6 +138,7 @@ void connect_to_wifi_ap(int k); //connects to an ap depending on his index
 void disconnect_wifi_ap(); //diconnects from the ap
 void turn_off_wifi(); //turns off wifi
 String make_http_get_request(String url); //makes an http request
+void set_rtc_time_from_web(); //set the system and rtc time from the web
 
 //global variables:
 
