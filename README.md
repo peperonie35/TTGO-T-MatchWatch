@@ -47,7 +47,7 @@ apps: stop watch app, wifi remote app, calc app, battery info app, semi-finished
 
 <h2>I plan to add:</h2>
 
-Alarm system (didn't start working on that)
+Alarm to wake me up (didn't start working on that)
 
 Permanent settings (no reset at reboot) (didn't start working on that)
 
