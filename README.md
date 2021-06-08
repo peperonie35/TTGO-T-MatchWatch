@@ -32,3 +32,23 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 <h2>How to use ?</h2>
 
 create an app: [here](doc/create_an_app.md)
+
+<h2>Features:</h2>
+
+a system that manages apps (app swipe and more)
+
+easy way to manage wifi for apps
+
+easy way to use lvgl for apps
+
+easy way to create new apps
+
+apps: stop watch app, wifi remote app, calc app, battery info app, semi-finished settings app
+
+<h2>I plan to add:</h2>
+
+Alarm system (didn't start working on that)
+
+Permanent settings (no reset at reboot) (didn't start working on that)
+
+Bluetooth (with a companion app to allow notifications) (didn't start working on that)
