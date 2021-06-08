@@ -53,4 +53,4 @@ Alarm to wake me up (didn't start working on that)
 
 Permanent settings (no reset at reboot) (didn't start working on that)
 
-Bluetooth (with a companion app to allow notifications) (didn't start working on that)
+Bluetooth (with a companion app to allow notifications) (currently working on that)
