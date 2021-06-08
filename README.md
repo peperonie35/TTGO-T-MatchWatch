@@ -25,4 +25,4 @@ This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a soft
 
 <h2>How to use ?</h2>
 
-see [doc/how_to_use.rm]
+see [here](doc/how_to_use.rm)
