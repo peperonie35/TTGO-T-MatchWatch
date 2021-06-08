@@ -41,7 +41,7 @@ to disable the app swiping and menu press detection use disable_touch_features_f
 
 see appSettings.cpp for an example
 
-use the handle_lvgl_for_app function to use LVGL, there is to variants of this function:
+use the handle_lvgl_for_app function to use LVGL, there is two variants of this function:
 
 void handle_lvgl_for_app(AppState s, lv_obj_t *page, bool disable_default_gesture, bool enable_default_app_swipe);
 
