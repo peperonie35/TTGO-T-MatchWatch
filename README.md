@@ -24,3 +24,5 @@ This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a soft
 4-make sure to install the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPClient
 
 <h2>How to use ?</h2>
+
+see [doc/how_to_use.rm]
