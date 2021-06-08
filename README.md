@@ -1,5 +1,5 @@
 # MatchWatch
-This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a software for the TTGO T-watch 2020 v1
+This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a software for the TTGO T-watch 2020 v1 (should also work for v2 and v3, but make sure to modify config.h)
 
 <h2>How to install ?</h2>
 
