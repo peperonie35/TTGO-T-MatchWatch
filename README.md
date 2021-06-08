@@ -33,6 +33,8 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 
 create an app: [here](doc/create_an_app.md)
 
+I will add more doc later but for now just read the MWatch.h file, there is a bit of infomation here, also read the apps files to understand how an app works
+
 <h2>Features:</h2>
 
 a system that manages apps (app swipe and more)
