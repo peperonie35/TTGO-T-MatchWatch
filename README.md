@@ -25,4 +25,4 @@ This project is inspired by https://github.com/wfdudley/T-watch-2020 It's a soft
 
 <h2>How to use ?</h2>
 
-create an app: [here](doc/create_an_app.rd)
+create an app: [here](doc/create_an_app.md)
