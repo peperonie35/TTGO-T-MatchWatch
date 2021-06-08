@@ -5,6 +5,8 @@ It is a sketch for the arduino library but offers easy ways to create new apps a
 
 I took bits from https://github.com/wfdudley/T-watch-2020 (I stole some functions and stuff)
 
+It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPClient
+
 <h2>How to install ?</h2>
 
 <h3>VS CODE:</h3>
