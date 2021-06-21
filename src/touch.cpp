@@ -53,6 +53,11 @@ void defaultAppSwaperGestureHandler(int mSelect) {
     app_stack_gesture_handler(RIGHT);
     return;
   }
+  else if(mSelect == DOWN || mSelect == RIGHT || mSelect == LEFT || mSelect == UP) {
+    while(!app_stack.empty()) {
+      app_stack.erase(app_stack.begin());
+    }
+  }
   if (mSelect == DOWN) {
     if(defaultAppSwaperCurrentAppXPosition != 0) {
       defaultAppSwaperCurrentAppXPosition = defaultAppSwaperCurrentAppXPosition - 1;

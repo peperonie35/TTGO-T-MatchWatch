@@ -21,7 +21,7 @@ static const char *settings_buttons_str[NB_SETTINGS_BUTTONS_STR] = {
   "3",
   "4",
   "5",
-  "6"
+  "commit changes"
 };
 
 
@@ -35,6 +35,8 @@ static void btn_event_handler(lv_obj_t *obj, lv_event_t event) {
           stack_app(menu_screen_app);
         } else if(String(settings_buttons_str[i]) == "time") {
           stack_app(menu_time_app);
+        } else if(String(settings_buttons_str[i]) == "commit changes") {
+          write_settings();
         }
       }
     }
@@ -184,6 +186,7 @@ void menu_time_app(AppState s) {
     }
   } else if(s == DELETE) {
     m_need_wifi = false;
+    m_loading = false;
   } else if(s == WIFI_CONNECTED) {
     set_rtc_time_from_web();
     m_need_wifi = false;

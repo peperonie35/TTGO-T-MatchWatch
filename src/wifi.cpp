@@ -151,6 +151,7 @@ void disconnect_wifi_ap() {
 void turn_off_wifi() {
   Serial.println();
   Serial.print("turning off wifi");
+  esp_wifi_scan_stop();
   current_app(AppState::WIFI_DISCONNECTING);
   WiFi.disconnect();
   WiFi.mode(WIFI_OFF);

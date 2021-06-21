@@ -13,8 +13,11 @@
 #include <Arduino.h>
 #include "SPIFFS.h"
 #include "FS.h"
+#include <EEPROM.h>
 
 #define __MAIN__
+
+#define EPPROM_SIZE JSON_SETTINGS_SIZE
 
 #include "MWatch.h"
 
@@ -24,15 +27,22 @@ EventGroupHandle_t isr_group = NULL;
 
 void setup() {
   // put your setup code here, to run once:
+
   Serial.begin(115200);
-  Serial.print("booting MWatch . . . ");
+
+  Serial.print("\nbooting MWatch . . . ");
+
+  //EEPROM.begin(EPPROM_SIZE);
   if (!SPIFFS.begin(true)) {
     Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
   }
+  
+  read_settings();
 
   pinMode(4, OUTPUT);
   quickBuzz();
-  
+
   //Create a program that allows the required message objects and group flags
   g_event_queue_handle = xQueueCreate(20, sizeof(uint8_t));
   g_event_group = xEventGroupCreate();
@@ -109,14 +119,11 @@ void setup() {
 
   wifi_setup(); //setup wifi for use in app
 
-
-  //attempt to make touch async
   init_touch();
   
   current_app(AppState::INIT); // init the default app
   
   m_idle(); //reset last_activity to prevent screensaver_timeout at startup
-
 
   //calling the setup for all apps
   for(App app : Applications) {
@@ -127,7 +134,6 @@ void setup() {
   Serial.print("Setup finished");
 
   watch_on = true;
-
 }
 
 void loop() {
@@ -205,6 +211,17 @@ void loop() {
   }
 }
 
+
+void deep_sleep() {
+  if(ttgo->bl->isOn()) {
+    ttgo->displaySleep();
+    ttgo->powerOff();
+    esp_sleep_enable_ext0_wakeup((gpio_num_t)AXP202_INT, LOW);
+    esp_deep_sleep_start();
+  }
+}
+
+
 //handle going in and out of low_energy state
 void low_energy (void) {
   if (ttgo->bl->isOn()) {
@@ -212,6 +229,7 @@ void low_energy (void) {
     Serial.print("Entering light sleep mode.");
     xEventGroupSetBits(isr_group, WATCH_FLAG_SLEEP_MODE);
     current_app(AppState::DELETE);
+
     current_app = &appClock;
     defaultAppSwaperCurrentAppXPosition = 0;
     defaultAppSwaperCurrentAppYPosition = 0;

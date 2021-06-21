@@ -2,6 +2,8 @@
 #define MWATCH_H
 
 #include <vector>
+#include <string>
+#include <ArduinoJson.h>
 
 #ifdef __MAIN__
 #define EXTERN
@@ -10,14 +12,6 @@
 #define EXTERN extern
 #define INIT(x)
 #endif
-
-//personal data:
-#define M_LANGUAGE "fr"
-#define OPENWEATHER_KEY "put_key_here"
-#define LOCATIONIQ_KEY "put_key_here"
-#define HOME_LATITUDE "48.1605388"
-#define HOME_LONGITUDE "-1.7643878"
-#define HOME_CITY "Pace, FR"
 
 //idk what most of that does, but it's imporant ?
 #define G_EVENT_VBUS_PLUGIN         _BV(0)
@@ -138,12 +132,18 @@ void connect_to_wifi_ap(int k); //connects to an ap depending on his index
 void disconnect_wifi_ap(); //diconnects from the ap
 void turn_off_wifi(); //turns off wifi
 String make_http_get_request(String url); //makes an http request
-void set_rtc_time_from_web(); //set the system and rtc time from the web
+void set_rtc_time_from_web(); //update system time and rtc time from web
+
+void read_settings();
+void write_settings();
+void write_file_string(String path, String &data);
+String read_file_string(String path);
 
 //global variables:
 
 //config values
 #ifdef __MAIN__
+EXTERN std::string watch_name = "MatWatch";
 EXTERN uint8_t screen_brightness = 255;
 EXTERN uint32_t m_tz = TZ_CET;
 EXTERN void (*current_app)(AppState) = &appClock;
@@ -153,12 +153,15 @@ EXTERN uint8_t on_battery_screen_brightness = 100;
 EXTERN uint8_t screensaver_timeout = 5;
 #define MAX_NB_AP 2
 EXTERN AP AccessPoints[MAX_NB_AP] = {
-  { "some_wifi_ssid", "password"},    // Home hotspot
-  { "some_wifi_ssid2", "password2" }, // my phone hotspot
+  { "ssid-1", "password-1"},    // Home hotspot
+  { "ssid-2", "password-2" }, // my phone hotspot
 };
-EXTERN int defaultAppSwaperAppPositionsXmax = 2;
-EXTERN int defaultAppSwaperAppPositionsYmax = 1;
-EXTERN String defaultAppSwaperAppPositions[3][2] = {
+
+#define MAX_NB_X_APPSWAPER 3
+#define MAX_NB_Y_APPSWAPER 2
+EXTERN int defaultAppSwaperAppPositionsXmax = MAX_NB_X_APPSWAPER - 1;
+EXTERN int defaultAppSwaperAppPositionsYmax = MAX_NB_Y_APPSWAPER - 1;
+EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
   {"Clock App", "Settings App"},
   {"Battery App", "StopWatch App"},
   {"WifiRemote App", "Calc App"}
@@ -167,6 +170,7 @@ EXTERN int defaultAppSwaperCurrentAppXPosition = 0;
 EXTERN int defaultAppSwaperCurrentAppYPosition = 0;
 #endif
 #ifndef __MAIN__
+EXTERN std::string watch_name;
 EXTERN uint8_t screen_brightness;
 EXTERN uint32_t m_tz;
 EXTERN void (*current_app)(AppState);
@@ -178,7 +182,9 @@ EXTERN uint8_t screensaver_timeout;
 EXTERN AP AccessPoints[MAX_NB_AP];
 EXTERN int defaultAppSwaperAppPositionsXmax;
 EXTERN int defaultAppSwaperAppPositionsYmax;
-EXTERN String defaultAppSwaperAppPositions[3][2];
+#define MAX_NB_X_APPSWAPER 3
+#define MAX_NB_Y_APPSWAPER 2
+EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER];
 EXTERN int defaultAppSwaperCurrentAppXPosition;
 EXTERN int defaultAppSwaperCurrentAppYPosition;
 #endif
@@ -205,6 +211,9 @@ EXTERN TTGOClass *ttgo;
 EXTERN TFT_eSPI *tft;
 EXTERN AXP20X_Class *power;
 EXTERN bool watch_on;
+
+#define JSON_SETTINGS_SIZE 2048
+EXTERN StaticJsonDocument<JSON_SETTINGS_SIZE> json_settings;
 
 EXTERN char buff[512];
 

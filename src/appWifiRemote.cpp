@@ -9,7 +9,7 @@ static uint32_t last_update = 0;
 static int nb_load_pt = 0;
 static bool m_need_wifi = true;
 
-static const String api_url = "ap_url";
+static const String api_url = "put_url_here";
 static const String api_key = "there_is_no_key_yet";
 
 const char*wifiRemoteLabels[] = {
