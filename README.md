@@ -45,12 +45,12 @@ easy way to use lvgl for apps
 
 easy way to create new apps
 
-apps: stop watch app, wifi remote app, calc app, battery info app, semi-finished settings app
+easy way to store data or settings (with SPIFFS)
+
+apps: stop watch app, wifi remote app, calc app, battery info app, settings app
 
 <h2>I plan to add:</h2>
 
 Alarm to wake me up (didn't start working on that)
-
-Permanent settings (no reset at reboot) (didn't start working on that)
 
 Bluetooth (with a companion app to allow notifications) (currently working on that)
