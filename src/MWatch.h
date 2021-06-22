@@ -95,6 +95,7 @@ void appSettings(AppState s); // app to modify the settings (uses LVGL)
 void changeCurrentApp(String appName); //changes the current app
 void changeCurrentApp(void(*new_app)(AppState)); //changes the current app
 
+void handle_ble_for_app(AppState s, void(*ble_data_handler)(String data));
 void handle_wifi_for_app(AppState s, bool need_wifi); //handles wifi for an app(needs to be called at the start of the app func), set need_wifi depending on when the app need wifi to preserve batterie, calls current_app(WIFI_CONNECTED) when everything is ready to use internet, calls current_app(WIFI_NO_AVAILABLE) when there is no registered ap nearby
 void handle_lvgl_for_app(AppState s, lv_obj_t *page, bool disable_default_gesture, bool enable_default_app_swipe); //use when you want to use lvgl in an app (call at the start of the app func), give a ptr to the root lv_obj_t (hidden at app DELETE, showed at app INIT),set disable_default_gesture to true to allow lvgl to use touch, set enable_default_app_swipe to true to enable app swipe depending on the gesture as normal
 void handle_lvgl_for_app(AppState s, void(*__show)(), void(*__hide)(), bool disable_default_gesture, bool enable_default_app_swipe); // __hide is called at app DELETE, __show is called at app INIT
@@ -138,6 +139,13 @@ void read_settings();
 void write_settings();
 void write_file_string(String path, String &data);
 String read_file_string(String path);
+
+void initBLE();
+bool sendBLE(String command);
+void add_ble_command_to_send(String command);
+String get_ble_received_data();
+void deleteBLE();
+void handle_ble();
 
 //global variables:
 

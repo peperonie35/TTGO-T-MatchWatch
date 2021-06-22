@@ -18,10 +18,10 @@ void menu_time_app(AppState);
 static const char *settings_buttons_str[NB_SETTINGS_BUTTONS_STR] = {
   "screen",
   "time",
-  "3",
-  "4",
-  "5",
-  "commit changes"
+  "BLE",
+  "WiFi",
+  "commit settings changes",
+  "restart watch"
 };
 
 
@@ -35,8 +35,10 @@ static void btn_event_handler(lv_obj_t *obj, lv_event_t event) {
           stack_app(menu_screen_app);
         } else if(String(settings_buttons_str[i]) == "time") {
           stack_app(menu_time_app);
-        } else if(String(settings_buttons_str[i]) == "commit changes") {
+        } else if(String(settings_buttons_str[i]) == "commit settings changes") {
           write_settings();
+        } else if(String(settings_buttons_str[i]) == "restart watch") {
+          ESP.restart();
         }
       }
     }
@@ -135,7 +137,7 @@ static void setup_menu_screen(bool hidden = true) {
 
 }
 
-void setup_menu_time(bool hidden = true) {
+static void setup_menu_time(bool hidden = true) {
   if(menu_time_page != nullptr) {
     lv_obj_del(menu_time_page);
   }
@@ -204,7 +206,7 @@ void menu_screen_app(AppState s) {
 void appSettings(AppState s) {
     handle_lvgl_for_app(s, main_page, true, true);
     if(s == HANDLE) {
-        m_idle();
+      m_idle();
     } else if(s == SETUP) {
       setupPage();
       setup_menu_screen();
