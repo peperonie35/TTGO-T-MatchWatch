@@ -1,0 +1,29 @@
+{
+    "watch_name": "MatWatch",
+    "screen_brightness": 100,
+    "m_tz": 2730856407,
+    "AccessPoints": [
+        [
+            "pegase",
+            "ordivol1"
+        ],
+        [
+            "OnePlus 6t Mateo",
+            "oneplusmatconnexion2"
+        ]
+    ],
+    "defaultAppSwaperAppPositions": [
+        [
+            "Clock App",
+            "Settings App"
+        ],
+        [
+            "Battery App",
+            "StopWatch App"
+        ],
+        [
+            "WifiRemote App",
+            "Calc App"
+        ]
+    ]
+}
