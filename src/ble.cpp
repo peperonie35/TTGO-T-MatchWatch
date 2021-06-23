@@ -29,9 +29,12 @@ class cbServer : public BLEServerCallbacks
 {
   void onConnect(BLEServer *server) {
     connected = true;
+    pCharacteristic->setValue("NA");
+    pCharacteristic->notify();
   }
   void onDisconnect(BLEServer *server) {
     connected = false;
+    working_command = "";
   }
 };
 
@@ -75,6 +78,7 @@ static void handle_on_write(String data) {
       }
       working_command = "";
       pCharacteristic->setValue("NA");
+      pCharacteristic->notify();
     } else if(data == "ARBORT") {
       working_command = "";
       resp_buf = "";
@@ -93,8 +97,9 @@ void xBLETask(void * pvParameters) {
   pServer = BLEDevice::createServer();
   pService = pServer->createService(serviceUUID);
   pServer->setCallbacks(new cbServer());
-  pCharacteristic = pService->createCharacteristic(charUUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY);
+  pCharacteristic = pService->createCharacteristic(charUUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE);
   pCharacteristic->setCallbacks(new cbChar());
+  pCharacteristic->addDescriptor(new BLE2902());
   pCharacteristic->setValue("NA");
   pAdvertising = pServer->getAdvertising();
   pService->start();
