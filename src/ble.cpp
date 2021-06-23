@@ -147,11 +147,3 @@ void start_ble_task() {
   }
   xTaskCreate(xBLETask, "BLE", 8192, (void *) 1, tskIDLE_PRIORITY, &xBLE);
 }
-/*
-void stop_ble_task() {
-  restart = true;
-}
-
-void start_ble_task() {
-  initBLE();
-}*/
