@@ -1,8 +1,6 @@
 #include "config.h"
 #include "MWatch.h"
 
-static uint32_t clock_update_time;
-
 static int battery_level = 0;
 
 static byte xpos; // Starting position for the display
@@ -59,6 +57,7 @@ void appClock(AppState s) {
     ttgo->tft->setTextColor(TFT_DARKGREY, TFT_BLACK);
     tft->drawString(String(battery_level) + "%", 190, 0, 4);
     ttgo->tft->setTextColor(TFT_YELLOW, TFT_BLACK);
+    drawDigitalClock(HANDLE);
   } else if (s == HANDLE) {
     if(battery_level != ttgo->power->getBattPercentage()) {
       battery_level = ttgo->power->getBattPercentage();
