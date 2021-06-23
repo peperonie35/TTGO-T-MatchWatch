@@ -130,6 +130,8 @@ void setup() {
     app.app_ptr(SETUP);
   }
 
+  start_ble_task();
+
   Serial.println();
   Serial.print("Setup finished");
 
@@ -234,10 +236,13 @@ void low_energy (void) {
     defaultAppSwaperCurrentAppXPosition = 0;
     defaultAppSwaperCurrentAppYPosition = 0;
 
+    stop_ble_task();
+
     ttgo->closeBL();
     ttgo->stopLvglTick();
     ttgo->displaySleep();
     if (!WiFi.isConnected()) {
+
       WiFi.mode(WIFI_OFF);
       // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_2M);
       setCpuFrequencyMhz(20);
@@ -266,6 +271,7 @@ void low_energy (void) {
       Serial.print("Error entering light sleep: wifi conected");
     }
   } else {
+    start_ble_task();
     ttgo->startLvglTick();
     ttgo->displayWakeup();
     ttgo->rtc->syncToSystem();  // set OS clock to RTC clock

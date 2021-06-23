@@ -5,8 +5,6 @@ It is a sketch for the arduino library but offers easy ways to create new apps a
 
 I took bits from https://github.com/wfdudley/T-watch-2020 (I stole some functions and stuff)
 
-I used https://github.com/Bellafaire/Android-Companion-App-For-BLE-Devices companion app for BLE and some code from https://github.com/Bellafaire/ESP32-Smart-Watch to implement it
-
 It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPClient
 
 <h2>How to install ?</h2>
@@ -41,7 +39,7 @@ I will add more doc later but for now just read the MWatch.h file, there is a bi
 
 a system that manages apps (app swipe and more)
 
-Bluetooth (uses https://github.com/Bellafaire/Android-Companion-App-For-BLE-Devices companion app and some code from https://github.com/Bellafaire/ESP32-Smart-Watch) (can be used with use_ble_for_app() function, no real applications are implemented yet)
+Bluetooth
 
 easy way to manage wifi for apps
 

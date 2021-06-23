@@ -6,6 +6,7 @@
 #include "SPIFFS.h"
 #include "FS.h"
 #include <EEPROM.h>
+#include <BLEUUID.h>
 
 
 String read_file_string(String path) {
@@ -62,6 +63,12 @@ void read_settings() {
     if(json_settings["screensaver_timeout"].is<uint8_t>())
     screensaver_timeout = json_settings["screensaver_timeout"].as<uint8_t>();
 
+    if(json_settings["serviceUUID"].is<std::string>())
+    serviceUUID = BLEUUID::fromString(json_settings["serviceUUID"].as<std::string>());
+
+    if(json_settings["charUUID"].is<std::string>())
+    charUUID = BLEUUID::fromString(json_settings["charUUID"].as<std::string>());
+
     if(json_settings["AccessPoints"].is<JsonArray>()) {
         for(int i = 0; i < MAX_NB_AP; i ++) {
             if(json_settings["AccessPoints"][i].is<JsonArray>()) {
@@ -94,6 +101,10 @@ void write_settings() {
     json_settings["m_tz"] = m_tz;
 
     json_settings["screensaver_timeout"] = screensaver_timeout;
+
+    json_settings["serviceUUID"] = serviceUUID.toString();
+
+    json_settings["charUUID"] = charUUID.toString();
 
     for(int i = 0; i < MAX_NB_AP; i ++) {
         json_settings["AccessPoints"][i][0] = AccessPoints[i].ssid;

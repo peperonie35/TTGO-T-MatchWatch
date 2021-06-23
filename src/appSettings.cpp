@@ -1,6 +1,8 @@
 #include "config.h"
 #include "MWatch.h"
 
+#include <BLEDevice.h>
+
 static bool m_need_wifi = false;
 static bool m_loading = false;
 
@@ -8,10 +10,13 @@ static lv_obj_t *main_page;
 void appSettings(AppState);
 
 static lv_obj_t *menu_screen_page;
-void menu_screen_app(AppState);
+static void menu_screen_app(AppState);
 
 static lv_obj_t *menu_time_page;
-void menu_time_app(AppState);
+static void menu_time_app(AppState);
+
+static lv_obj_t *menu_ble_page;
+static void menu_ble_app(AppState);
 
 //warning if you want more than 6 menus, you must turn handle_lvgl_for_app(s, page, true, true); to handle_lvgl_for_app(s, page, true, false); (to desactivate the app swaper) or reduce button height
 #define NB_SETTINGS_BUTTONS_STR 6
@@ -39,6 +44,8 @@ static void btn_event_handler(lv_obj_t *obj, lv_event_t event) {
           write_settings();
         } else if(String(settings_buttons_str[i]) == "restart watch") {
           ESP.restart();
+        } else if(String(settings_buttons_str[i]) == "BLE") {
+          stack_app(menu_ble_app);
         }
       }
     }
@@ -175,7 +182,63 @@ static void setup_menu_time(bool hidden = true) {
   lv_obj_set_hidden(menu_time_page, hidden);
 }
 
-void menu_time_app(AppState s) {
+static void setup_menu_ble(bool hidden = true) {
+  if(menu_ble_page != nullptr) {
+    lv_obj_del(menu_ble_page);
+  }
+
+  menu_ble_page = lv_list_create(lv_scr_act(), NULL);
+  lv_obj_add_style(menu_ble_page, LV_OBJ_PART_MAIN, get_lvgl_style());
+  lv_obj_set_size(menu_ble_page, 240, 240);
+  lv_obj_align(menu_ble_page, NULL, LV_ALIGN_CENTER, 0, 0);
+
+  lv_obj_t *some_button;
+  if(json_settings["BLE_enable"].is<bool>() && json_settings["BLE_enable"].as<bool>()) {
+    some_button = lv_list_add_btn(menu_ble_page, NULL, "disable ble use");
+    lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+      if(event == LV_EVENT_CLICKED) {
+        disable_ble();
+        setup_menu_ble(false);
+      }
+    });
+  } else {
+    some_button = lv_list_add_btn(menu_ble_page, NULL, "enable ble use");
+    lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+      if(event == LV_EVENT_CLICKED) {
+        enable_ble();
+        setup_menu_ble(false);
+      }
+    });
+  }
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+
+  some_button = lv_list_add_btn(menu_ble_page, NULL, "serviceUUID:");
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  if(json_settings["serviceUUID"].is<std::string>())
+  some_button = lv_list_add_btn(menu_ble_page, NULL, json_settings["serviceUUID"].as<std::string>().c_str());
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_page, NULL, "charUUID:");
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  if(json_settings["charUUID"].is<std::string>())
+  some_button = lv_list_add_btn(menu_ble_page, NULL, json_settings["charUUID"].as<std::string>().c_str());
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_page, NULL, "test ble (Serial prints)");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/hello");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  lv_obj_set_hidden(menu_ble_page, hidden);
+}
+
+static void menu_time_app(AppState s) {
   handle_wifi_for_app(s, m_need_wifi);
   handle_lvgl_for_app(s, menu_time_page, true, true);
   if(s == HANDLE) {
@@ -196,13 +259,25 @@ void menu_time_app(AppState s) {
   }
 }
 
-void menu_screen_app(AppState s) {
+static void menu_screen_app(AppState s) {
   handle_lvgl_for_app(s, menu_screen_page, true, true);
   if(s == HANDLE) {
     m_idle();
   }
 }
 
+static void ble_callback(String data, String command) {
+  if(command == "/notifications") {
+    Serial.print("\ntest successful, ble working !");
+  }
+}
+
+static void menu_ble_app(AppState s) {
+  handle_lvgl_for_app(s, menu_ble_page, true, true);
+  if(s == HANDLE) {
+    m_idle();
+  }
+}
 void appSettings(AppState s) {
     handle_lvgl_for_app(s, main_page, true, true);
     if(s == HANDLE) {
@@ -211,5 +286,6 @@ void appSettings(AppState s) {
       setupPage();
       setup_menu_screen();
       setup_menu_time();
+      setup_menu_ble();
     }
 }

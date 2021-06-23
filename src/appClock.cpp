@@ -46,6 +46,10 @@ void drawDigitalClock(AppState s) {
   }
 }
 
+static void m_ble_cb(String command, String data) {
+  Serial.printf("\nrecived ble:\n command:\n  %s\n data:\n  %s", command.c_str(), data.c_str());
+}
+
 void appClock(AppState s) {
   drawDigitalClock(s);
   if (s == AppState::DELETE) {
@@ -61,5 +65,7 @@ void appClock(AppState s) {
       ttgo->tft->setTextColor(TFT_DARKGREY, TFT_BLACK);
       tft->drawString(String(battery_level) + "%", 190, 0, 4);
     }
+  } else if(s == SETUP) {
+    add_ble_cb(m_ble_cb, "appClock cb");
   }
 }

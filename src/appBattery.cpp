@@ -7,6 +7,7 @@ static float vbus_v, vbus_c, batt_v;
 
 void appBattery(AppState s) {
   if (s == AppState::HANDLE) {
+    m_idle();
     if (batt_update_time + 1000 < millis()) {
       batt_update_time = millis();
       // get the values
