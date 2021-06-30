@@ -93,26 +93,6 @@ void setup() {
     }
   }, FALLING);
 
-  pinMode(RTC_INT, INPUT_PULLUP);
-  attachInterrupt(RTC_INT, [] {
-    rtcIrq = 1;
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    EventBits_t  bits = xEventGroupGetBitsFromISR(isr_group);
-    if (bits & WATCH_FLAG_SLEEP_MODE)
-    {
-      //! For quick wake up, use the group flag
-      xEventGroupSetBitsFromISR(isr_group, WATCH_FLAG_SLEEP_EXIT | WATCH_FLAG_AXP_IRQ, &xHigherPriorityTaskWoken);
-    } else
-    {
-      uint8_t data = Q_EVENT_AXP_INT;
-      xQueueSendFromISR(g_event_queue_handle, &data, &xHigherPriorityTaskWoken);
-    }
-    if (xHigherPriorityTaskWoken)
-    {
-      portYIELD_FROM_ISR ();
-    }
-  }, FALLING);
-
   ttgo->rtc->syncToSystem();
 
   ttgo->openBL(); // Turn on the backlight
@@ -140,23 +120,13 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  bool rlst;
   uint8_t data;
+
 
   //! Fast response wake-up interrupt
   EventBits_t  bits = xEventGroupGetBits(isr_group);
   if (bits & WATCH_FLAG_SLEEP_EXIT) {
-    m_idle();
-    setCpuFrequencyMhz(160);
-
-    low_energy();
-
-    if (bits & WATCH_FLAG_BMA_IRQ) {
-      do {
-        rlst =  ttgo->bma->readInterrupt();
-      } while (!rlst);
-      xEventGroupClearBits(isr_group, WATCH_FLAG_BMA_IRQ);
-    }
+    low_energy(WAKE_UP);
     if (bits & WATCH_FLAG_AXP_IRQ) {
       power->readIRQ();
       power->clearIRQ();
@@ -165,7 +135,6 @@ void loop() {
     }
     xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_EXIT);
     xEventGroupClearBits(isr_group, WATCH_FLAG_SLEEP_MODE);
-    watch_on = true;
   }
   if ((bits & WATCH_FLAG_SLEEP_MODE)) {
     //! No event processing after entering the information screen
@@ -173,12 +142,6 @@ void loop() {
   }
 
   //! Normal polling
-  if (rtcIrq) {
-    Serial.println();
-    Serial.print(F("Polled for rtc alarm"));
-    rtcIrq = 0;
-    disable_rtc_alarm();
-  }
 
   if (xQueueReceive(g_event_queue_handle, &data, 5 / portTICK_RATE_MS) == pdPASS) {
     switch (data) {
@@ -189,7 +152,7 @@ void loop() {
           last_activity = 0;
           Serial.println();
           Serial.print("button sleep request ");
-          low_energy();
+          low_energy(SLEEP);
           return;
         }
         power->clearIRQ();
@@ -206,82 +169,49 @@ void loop() {
     current_gesture_handler(last_gesture);
     current_app(AppState::HANDLE);
    } else {
-    watch_on = false;
     Serial.println();
     Serial.print("screensaver_timeout bye !");
-    low_energy();
+    low_energy(SLEEP);
   }
+
 }
 
 
-void deep_sleep() {
-  if(ttgo->bl->isOn()) {
-    ttgo->displaySleep();
-    ttgo->powerOff();
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)AXP202_INT, LOW);
-    esp_deep_sleep_start();
-  }
-}
+
 
 
 //handle going in and out of low_energy state
-void low_energy (void) {
-  if (ttgo->bl->isOn()) {
-    Serial.println();
-    Serial.print("Entering light sleep mode.");
+void low_energy (LEState) {
+  if (watch_on) {
     xEventGroupSetBits(isr_group, WATCH_FLAG_SLEEP_MODE);
-    current_app(AppState::DELETE);
-
-    current_app = &appClock;
-    defaultAppSwaperCurrentAppXPosition = 0;
-    defaultAppSwaperCurrentAppYPosition = 0;
-
-    stop_ble_task();
-
-    ttgo->closeBL();
-    ttgo->stopLvglTick();
-    ttgo->displaySleep();
-    if (!WiFi.isConnected()) {
-
-      WiFi.mode(WIFI_OFF);
-      // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_2M);
-      setCpuFrequencyMhz(20);
-      // Serial.println(F("before gpio_wakeup_enable() party."));
-
-      esp_err_t erret;
-      erret = gpio_wakeup_enable ((gpio_num_t)AXP202_INT, GPIO_INTR_LOW_LEVEL);
-      if (erret != ESP_OK) {
-        Serial.println();
-        Serial.print(F("gpio_wakeup_enable failed for AXP202_INT"));
+    if(json_settings["sleep_mode"].is<String>()) {
+      String slm = json_settings["sleep_mode"].as<String>();
+      if(slm == "light_sleep_basic") {
+        light_sleep_basic_in();
+      } else if(slm == "deep_sleep_basic") {
+        deep_sleep_basic_in();
+      } else if(slm == "screen_off_sleep_basic") {
+        screen_off_sleep_basic_in();
       }
-      // Serial.println(F("gpio_wakeup_enable(RTC_INT, LOW_LEVEL)"));
-      erret = gpio_wakeup_enable ((gpio_num_t)RTC_INT, GPIO_INTR_LOW_LEVEL);
-      if (erret != ESP_OK) {
-        Serial.println();
-        Serial.print(F("gpio_wakeup_enable failed for RTC_INT"));
-      }
-      erret = esp_sleep_enable_gpio_wakeup();
-      if (erret != ESP_OK) {
-        Serial.println();
-        Serial.print(F("esp_sleep_enable_gpio_wakeup() failed"));
-      }
-      esp_light_sleep_start();
     } else {
-      Serial.println();
-      Serial.print("Error entering light sleep: wifi conected");
+      json_settings["sleep_mode"] = "light_sleep_basic";
+      write_settings();
+      light_sleep_basic_in();
     }
+    watch_on = false;
   } else {
-    start_ble_task();
-    ttgo->startLvglTick();
-    ttgo->displayWakeup();
-    ttgo->rtc->syncToSystem();  // set OS clock to RTC clock
-    if (rtcIrq) {
-      Serial.println();
-      Serial.print(F("wake from sleep, we see rtc alarm"));
-      rtcIrq = 0;
+    if(json_settings["sleep_mode"].is<String>()) {
+      String slm = json_settings["sleep_mode"].as<String>();
+      if(slm == "light_sleep_basic") {
+        light_sleep_basic_out();
+      } else if(slm == "screen_off_sleep_basic") {
+        screen_off_sleep_basic_out();
+      }
+    } else {
+      json_settings["sleep_mode"] = "light_sleep_basic";
+      write_settings();
+      light_sleep_basic_out();
     }
-    lv_disp_trig_activity(NULL);
-    ttgo->openBL();
-    current_app(AppState::INIT);
+    watch_on = true;
   }
 }

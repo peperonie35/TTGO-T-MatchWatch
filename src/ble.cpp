@@ -31,10 +31,12 @@ class cbServer : public BLEServerCallbacks
     connected = true;
     pCharacteristic->setValue("NA");
     pCharacteristic->notify();
+    Serial.print("\nConnected to device");
   }
   void onDisconnect(BLEServer *server) {
     connected = false;
     working_command = "";
+    Serial.print("\nDisconnected from device");
   }
 };
 
@@ -115,7 +117,7 @@ void xBLETask(void * pvParameters) {
         pCharacteristic->notify();
       }
     }
-    vTaskDelay(1000/portTICK_PERIOD_MS);
+    vTaskDelay(50/portTICK_PERIOD_MS);
   }
   vTaskDelete(NULL);
 }
@@ -137,6 +139,7 @@ void disable_ble() {
 }
 
 void stop_ble_task() {
+  Serial.print("\nBLE task stoping");
   if(xBLE != NULL) {
     pService->stop();
     pAdvertising->stop();
@@ -147,8 +150,11 @@ void stop_ble_task() {
 }
 
 void start_ble_task() {
+  Serial.print("\nBLE task starting");
   if(!json_settings["BLE_enable"].is<bool>() || !json_settings["BLE_enable"].as<bool>()) {
     return;
   }
-  xTaskCreate(xBLETask, "BLE", 8192, (void *) 1, tskIDLE_PRIORITY, &xBLE);
+  if(xBLE == NULL) {
+    xTaskCreate(xBLETask, "BLE", 8192, (void *) 1, tskIDLE_PRIORITY, &xBLE);
+  }
 }

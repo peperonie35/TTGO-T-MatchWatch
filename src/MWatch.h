@@ -29,7 +29,7 @@ enum {
   Q_EVENT_WIFI_SCAN_DONE,
   Q_EVENT_WIFI_CONNECT,
   Q_EVENT_BMA_INT,
-  Q_EVENT_AXP_INT,
+  Q_EVENT_AXP_INT
 } ;
 
 //times zones
@@ -59,15 +59,16 @@ enum {
 
 // #define DEFAULT_SCREEN_TIMEOUT  30*1000 // now user controllable
 
-#define WATCH_FLAG_SLEEP_MODE   _BV(1)
-#define WATCH_FLAG_SLEEP_EXIT   _BV(2)
-#define WATCH_FLAG_BMA_IRQ      _BV(3)
-#define WATCH_FLAG_AXP_IRQ      _BV(4)
+#define WATCH_FLAG_SLEEP_MODE _BV(1)
+#define WATCH_FLAG_SLEEP_EXIT _BV(2)
+#define WATCH_FLAG_BMA_IRQ _BV(3)
+#define WATCH_FLAG_AXP_IRQ _BV(4)
 
 //clock skins:
 #define BASIC_CLOCK_SKIN 1
 
 //basic structs / enums
+enum LEState {SLEEP = 0, WAKE_UP, START_BACKGROUND, STOP_BACKGROUND};
 enum AppState { HANDLE = 0, INIT, DELETE, WIFI_SCAN_START, WIFI_SCAN_ENDED, WIFI_CONNECTING, WIFI_CONNECTED, WIFI_DISCONNECTING, WIFI_DISCONNECTED, WIFI_NO_AVAILABLE, SETUP }; //differents states called in an app
 struct AP {
   String ssid;
@@ -111,7 +112,7 @@ void unstack_app(); //restore the previous app on the stack (an app is added to 
 void quickBuzz(void); //makes a vibration
 void m_idle(void); //resets last activity to prevent watch from going to sleep (also makes a bright_check())
 void bright_check(void); //check the brightness and mofifies the screen brightness if it has changed (called by default in m_idle)
-void low_energy(void); //called when going in and out of light_sleep (handles light_sleep to save batterie)
+void low_energy(LEState); //called when going in and out of light_sleep (handles light_sleep to save batterie)
 void disable_rtc_alarm(void); //diables the rtc alarm (nothing uses this for now)
 Date getDate(uint32_t tz); //returs the date depending on the timezone (tz) use m_tz setting if u want (default timezone for the app)
 void draw_keyboard(uint8_t, const char **, uint8_t, bool, char *); //draws a keyboard (4*3 or 4*4 respectivly num_keys = 12 or num_keys = 16) needs the table of labels (const char **)
@@ -147,6 +148,12 @@ void disable_ble();
 void add_ble_command(String command);
 void add_ble_cb(void(*cb)(String command, String data), String cb_name);
 void remove_ble_cb(String cb_name_to_rmv);
+
+void light_sleep_basic_in();
+void light_sleep_basic_out();
+void deep_sleep_basic_in();
+void screen_off_sleep_basic_in();
+void screen_off_sleep_basic_out();
 
 //global variables:
 
@@ -241,7 +248,5 @@ EXTERN std::vector<void(*)(AppState)> app_stack;
 
 EXTERN boolean charge_cable_connected;
 EXTERN uint32_t last_activity;
-
-EXTERN boolean rtcIrq;
 
 #endif // MWATCH_H
