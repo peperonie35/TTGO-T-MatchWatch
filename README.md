@@ -37,7 +37,7 @@ I will add more doc later but for now just read the MWatch.h file, there is bits
 
 <h2>Features:</h2>
 
-a system that manages apps (app swipe and more)
+an intuitive system that manages apps (app swipe and more)
 
 Bluetooth (I have a working companion app, with some bugs, didn't published it yet, ask me if you want it)
 
