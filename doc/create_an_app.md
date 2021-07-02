@@ -20,7 +20,7 @@ to set an app to be the current app you can either call the changeCurrentApp("yo
 
 3-declare your app with the others in "MWatch.h" by adding void appName(AppState); at the start, and near the bottom of the file, by adding this line in the Applications table : {"your app name", &appName} and adding 1 to the #define NB_APP (ex if you have #define NB_APP 7 modify to #define NB_APP 8), now your app will be called in void setup() with s==SETUP
 
-4-modify one of the app name in the defaultAppSwiperPositions table to be your app name send the program to the watch, and swipe to arrive to your app (should be a black screen if your app is plain)
+4-modify one of the app name in the defaultAppSwiperPositions table to be your app name, send the program to the watch, and swipe to arrive to your app (should be a black screen if your app is empty, or just the last frame of the last app)
 
 <h2>How to display stuff</h2>
 

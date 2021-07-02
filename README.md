@@ -1,7 +1,7 @@
 # MatWatch
 This project is a software for the TTGO T-watch 2020 v1 (should also work for v2 and v3, but make sure to modify config.h)
 
-It is a sketch for the arduino library but offers easy ways to create new apps and features
+It is a sketch for the arduino library but offers easy ways to create new apps and features, it's very customisable
 
 I took bits from https://github.com/wfdudley/T-watch-2020 (I stole some functions and stuff)
 
@@ -33,13 +33,13 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 
 create an app: [here](doc/create_an_app.md)
 
-I will add more doc later but for now just read the MWatch.h file, there is a bit of infomation here, also read the apps files to understand how an app works
+I will add more doc later but for now just read the MWatch.h file, there is bits of infomation here, also read the apps files to understand how an app works
 
 <h2>Features:</h2>
 
-a system that manages apps (app swipe and more)
+an intuitive system that manages apps (app swipe and more)
 
-Bluetooth (I just have to make the phone app)
+Bluetooth (I have a working companion app, with some bugs, didn't published it yet, ask me if you want it)
 
 easy way to manage wifi for apps
 
