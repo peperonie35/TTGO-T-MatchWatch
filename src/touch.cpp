@@ -33,8 +33,8 @@ void stack_app(void (*app_to_stack)(AppState)) {
 }
 
 void unstack_app() {
-  changeCurrentApp(app_stack[0]);
-  app_stack.erase(app_stack.begin());
+  changeCurrentApp(app_stack.back());
+  app_stack.pop_back();
 }
 
 void app_stack_gesture_handler(int mSelect) {
@@ -42,8 +42,7 @@ void app_stack_gesture_handler(int mSelect) {
     return;
   }
   if(mSelect == RIGHT) {
-    changeCurrentApp(app_stack[0]);
-    app_stack.erase(app_stack.begin());
+    unstack_app();
   }
 }
 
