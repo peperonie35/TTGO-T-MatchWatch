@@ -104,6 +104,7 @@ void xBLETask(void * pvParameters) {
   pCharacteristic->addDescriptor(new BLE2902());
   pCharacteristic->setValue("NA");
   pAdvertising = pServer->getAdvertising();
+  pAdvertising->addServiceUUID(serviceUUID);
   pService->start();
   pAdvertising->setScanResponse(true);
   pAdvertising->start();

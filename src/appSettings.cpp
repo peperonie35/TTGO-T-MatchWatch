@@ -15,6 +15,9 @@ static void menu_screen_app(AppState);
 static lv_obj_t *menu_time_page;
 static void menu_time_app(AppState);
 
+static lv_obj_t *menu_ble_test_page;
+static void menu_ble_test_app(AppState);
+
 static lv_obj_t *menu_ble_page;
 static void menu_ble_app(AppState);
 
@@ -227,7 +230,30 @@ static void setup_menu_ble(bool hidden = true) {
   some_button = lv_list_add_btn(menu_ble_page, NULL, json_settings["charUUID"].as<std::string>().c_str());
   lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
 
-  some_button = lv_list_add_btn(menu_ble_page, NULL, "test ble (Serial prints)");
+  some_button = lv_list_add_btn(menu_ble_page, NULL, "test ble");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      stack_app(menu_ble_test_app);
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  lv_obj_set_hidden(menu_ble_page, hidden);
+}
+
+static void setup_menu_ble_test(bool hidden = true) {
+  if(menu_ble_test_page != nullptr) {
+    lv_obj_del(menu_ble_test_page);
+  }
+
+  menu_ble_test_page = lv_list_create(lv_scr_act(), NULL);
+  lv_obj_add_style(menu_ble_test_page, LV_OBJ_PART_MAIN, get_lvgl_style());
+  lv_obj_set_size(menu_ble_test_page, 240, 240);
+  lv_obj_align(menu_ble_test_page, NULL, LV_ALIGN_CENTER, 0, 0);
+
+  lv_obj_t *some_button;
+
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "hello test (serial print)");
   lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
     if(event == LV_EVENT_CLICKED) {
       add_ble_command("/hello");
@@ -235,7 +261,47 @@ static void setup_menu_ble(bool hidden = true) {
   });
   lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
 
-  lv_obj_set_hidden(menu_ble_page, hidden);
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "play");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/play");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "pause");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/pause");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "nextSong");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/nextSong");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "prevSong");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/prevSong");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  some_button = lv_list_add_btn(menu_ble_test_page, NULL, "time (serial print)");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      add_ble_command("/time");
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  lv_obj_set_hidden(menu_ble_test_page, hidden);
 }
 
 static void menu_time_app(AppState s) {
@@ -267,10 +333,22 @@ static void menu_screen_app(AppState s) {
 }
 
 static void ble_callback(String data, String command) {
-  if(command == "/notifications") {
-    Serial.print("\ntest successful, ble working !");
+  if(command == "/hello") {
+    Serial.print("\nhello test successful, ble working !");
   }
 }
+
+static void menu_ble_test_app(AppState s) {
+  handle_lvgl_for_app(s, menu_ble_test_page, true, true);
+  if(s == HANDLE) {
+    m_idle();
+  } else if(s == INIT) {
+    add_ble_cb(ble_callback, "menu_ble_test_app_cb");
+  } else if(s == DELETE) {
+    remove_ble_cb("menu_ble_test_app_cb");
+  }
+}
+
 
 static void menu_ble_app(AppState s) {
   handle_lvgl_for_app(s, menu_ble_page, true, true);
@@ -287,5 +365,6 @@ void appSettings(AppState s) {
       setup_menu_screen();
       setup_menu_time();
       setup_menu_ble();
+      setup_menu_ble_test();
     }
 }
