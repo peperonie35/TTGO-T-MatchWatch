@@ -39,7 +39,7 @@ I will add more doc later but for now just read the MWatch.h file, there is a bi
 
 a system that manages apps (app swipe and more)
 
-Bluetooth (I just have to make the phone app)
+Bluetooth (I have a working companion app, with some bugs, didn't published it yet, ask me if you want it)
 
 easy way to manage wifi for apps
 
