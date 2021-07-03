@@ -91,6 +91,13 @@ void read_settings() {
             }
         }
     }
+
+    if(json_settings["defaultAppName"].is<String>()) {
+        defaultAppName = json_settings["defaultAppName"].as<String>();
+        current_app = get_app_by_name(defaultAppName).app_ptr;
+        defaultAppSwaperCurrentAppXPosition = get_app_x_position_by_name(defaultAppName);
+        defaultAppSwaperCurrentAppYPosition = get_app_y_position_by_name(defaultAppName);
+    }
 }
 
 void write_settings() {
@@ -116,6 +123,8 @@ void write_settings() {
             json_settings["defaultAppSwaperAppPositions"][i][k] = defaultAppSwaperAppPositions[i][k];
         }
     }
+
+    json_settings["defaultAppName"] = defaultAppName;
 
     String out;
     serializeJson(json_settings, out);

@@ -1,70 +1,142 @@
 #include "config.h"
 #include "MWatch.h"
 
-static int battery_level = 0;
+#include "lvgl_declare.h"
 
-static byte xpos; // Starting position for the display
-static byte ypos;
-static byte omm;
-static byte xcolon;
+static lv_obj_t *main_page;
 
-//draw a digital clock folloiwng the current rtc date at m_tz time zone
-void drawDigitalClock(AppState s) {
-  if (s == AppState::INIT) {
-    tft->fillScreen(TFT_BLACK);
-    omm = 99;
-    xcolon = 0;
-  } else if (s == AppState::HANDLE) {
-    xpos = 40; // Starting position for the
-    ypos = 90;
-    Date tt = getDate(m_tz);
-    if (omm != tt.mm) {
-      ttgo->tft->setTextColor(0x39C4, TFT_BLACK);
-      ttgo->tft->drawString("88:88", xpos, ypos, 7); // Overwrite the text to clear it
-      ttgo->tft->setTextColor(0xFBE0, TFT_BLACK); // Orange
+#define VAR_X 16
+#define CHAR_SPACE 36
+static lv_obj_t *hours_dec;
+static lv_obj_t *hours_unit;
+static lv_obj_t *separator;
+static lv_obj_t *minutes_dec;
+static lv_obj_t *minutes_unit;
 
-      omm = tt.mm;
+static lv_obj_t *batterie_label;
 
-      if (tt.hh < 10) xpos += ttgo->tft->drawChar('0', xpos, ypos, 7);
-      xpos += ttgo->tft->drawNumber(tt.hh, xpos, ypos, 7);
-      xcolon = xpos;
-      xpos += ttgo->tft->drawChar(':', xpos, ypos, 7);
-      if (tt.mm < 10) xpos += ttgo->tft->drawChar('0', xpos, ypos, 7);
-      ttgo->tft->drawNumber(tt.mm, xpos, ypos, 7);
-    }
-
-    if (tt.ss % 2) { // Flash the colon
-      ttgo->tft->setTextColor(0x39C4, TFT_BLACK);
-      xpos += ttgo->tft->drawChar(':', xcolon, ypos, 7);
-      ttgo->tft->setTextColor(0xFBE0, TFT_BLACK);
-    } else {
-      ttgo->tft->setTextColor(0xFBE0, TFT_BLACK);
-      ttgo->tft->drawChar(':', xcolon, ypos, 7);
-    }
+static void change_num(lv_obj_t *img, int num) {
+  if(num == 0) {
+    lv_img_set_src(img, &NUM_0_IMG);
+  } else if (num == 1) {
+    lv_img_set_src(img, &NUM_1_IMG);
+  } else if (num == 2) {
+    lv_img_set_src(img, &NUM_2_IMG);
+  } else if (num == 3) {
+    lv_img_set_src(img, &NUM_3_IMG);
+  } else if (num == 4) {
+    lv_img_set_src(img, &NUM_4_IMG);
+  } else if (num == 5) {
+    lv_img_set_src(img, &NUM_5_IMG);
+  } else if (num == 6) {
+    lv_img_set_src(img, &NUM_6_IMG);
+  } else if (num == 7) {
+    lv_img_set_src(img, &NUM_7_IMG);
+  } else if (num == 8) {
+    lv_img_set_src(img, &NUM_8_IMG);
+  } else if (num == 9) {
+    lv_img_set_src(img, &NUM_9_IMG);
   }
 }
 
-static void m_ble_cb(String command, String data) {
-  Serial.printf("\nrecived ble:\n command:\n  %s\n data:\n  %s", command.c_str(), data.c_str());
+static void update_time(int hh, int mm, int ss) {
+  static int old_mm;
+  if(old_mm != mm) {
+    old_mm = mm;
+    change_num(hours_dec, hh/10);
+    change_num(hours_unit, hh%10);
+    change_num(minutes_dec, mm/10);
+    change_num(minutes_unit, mm%10);
+  }
+  if(ss % 2) {
+    lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_DARKGRAY);
+  } else {
+    lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_NAVY);
+  }
+}
+
+static void update_batterie_indicator() {
+  static int batterie_level;
+  if(batterie_level != ttgo->power->getBattPercentage()) {
+    batterie_level = ttgo->power->getBattPercentage();
+    String bs = String(batterie_level) + "%";
+    lv_label_set_text(batterie_label, bs.c_str());
+  }
+}
+
+static void setup_main_page(bool hidden = true) {
+  if(main_page != nullptr) {
+    lv_obj_del(main_page);
+  }
+
+  main_page = lv_obj_create(lv_scr_act(), NULL);
+  lv_obj_add_style(main_page, LV_OBJ_PART_MAIN, get_lvgl_style());
+  lv_obj_set_size(main_page, 240, 240);
+  lv_obj_align(main_page, NULL, LV_ALIGN_CENTER, 0, 0);
+
+  hours_dec = lv_img_create(main_page, NULL);
+  lv_obj_align(hours_dec, main_page, LV_ALIGN_CENTER, -(2*CHAR_SPACE) + VAR_X, 0);
+  lv_img_set_src(hours_dec, &NUM_0_IMG);
+  lv_obj_set_style_local_image_recolor(hours_dec, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
+  lv_obj_set_style_local_image_recolor_opa(hours_dec, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MAX);
+
+  hours_unit = lv_img_create(main_page, NULL);
+  lv_obj_align(hours_unit, main_page, LV_ALIGN_CENTER, -CHAR_SPACE + VAR_X, 0);
+  lv_img_set_src(hours_unit, &NUM_0_IMG);
+  lv_obj_set_style_local_image_recolor(hours_unit, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
+  lv_obj_set_style_local_image_recolor_opa(hours_unit, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MAX);
+
+  separator = lv_img_create(main_page, NULL);
+  lv_obj_align(separator, main_page, LV_ALIGN_CENTER, 0 + VAR_X, 0);
+  lv_img_set_src(separator, &POINTS_IMG);
+  lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
+  lv_obj_set_style_local_image_recolor_opa(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MAX);
+  lv_obj_add_style(separator, LV_IMG_PART_MAIN, get_lvgl_style());
+
+  minutes_dec = lv_img_create(main_page, NULL);
+  lv_obj_align(minutes_dec, main_page, LV_ALIGN_CENTER, CHAR_SPACE + VAR_X, 0);
+  lv_img_set_src(minutes_dec, &NUM_0_IMG);
+  lv_obj_set_style_local_image_recolor(minutes_dec, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
+  lv_obj_set_style_local_image_recolor_opa(minutes_dec, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MAX);
+
+  minutes_unit = lv_img_create(main_page, NULL);
+  lv_obj_align(minutes_unit, main_page, LV_ALIGN_CENTER, 2*CHAR_SPACE + VAR_X, 0);
+  lv_img_set_src(minutes_unit, &NUM_0_IMG);
+  lv_obj_set_style_local_image_recolor(minutes_unit, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
+  lv_obj_set_style_local_image_recolor_opa(minutes_unit, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MAX);
+
+  batterie_label = lv_label_create(main_page, NULL);
+  lv_label_set_text(batterie_label, "100%");
+  lv_obj_align(batterie_label, main_page, LV_ALIGN_IN_TOP_RIGHT, -15, 0);
+  lv_obj_set_style_local_text_font(batterie_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+  lv_obj_set_style_local_text_color(batterie_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_DARKGRAY);
+  lv_obj_set_style_local_text_color(batterie_label, LV_LABEL_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_DARKGRAY);
+
+  lv_obj_set_hidden(main_page, hidden);
+}
+
+static uint32_t last_press = 0;
+
+static void event_cb(lv_obj_t *obj, lv_event_t event) {
+    if(event == LV_EVENT_PRESSED) {
+        m_idle();
+        if(millis() - last_press < 500) {
+            
+        }
+        last_press = millis();
+    }
 }
 
 void appClock(AppState s) {
-  drawDigitalClock(s);
-  if (s == AppState::DELETE) {
-    tft->fillScreen(TFT_BLACK);
-  } else if (s == AppState::INIT) {
-    tft->fillScreen(TFT_BLACK);
-    ttgo->tft->setTextColor(TFT_DARKGREY, TFT_BLACK);
-    tft->drawString(String(battery_level) + "%", 190, 0, 4);
-    ttgo->tft->setTextColor(TFT_YELLOW, TFT_BLACK);
-    drawDigitalClock(HANDLE);
-  } else if (s == HANDLE) {
-    if(battery_level != ttgo->power->getBattPercentage()) {
-      battery_level = ttgo->power->getBattPercentage();
-      ttgo->tft->setTextColor(TFT_DARKGREY, TFT_BLACK);
-      tft->drawString(String(battery_level) + "%", 190, 0, 4);
-    }
+  handle_lvgl_for_app(s, main_page, true, true);
+  if(s == HANDLE) {
+    Date tt = getDate(m_tz);
+    update_time(tt.hh, tt.mm, tt.ss);
+    update_batterie_indicator();
   } else if(s == SETUP) {
-    add_ble_cb(m_ble_cb, "appClock cb");
+    setup_main_page();
+    lv_obj_set_event_cb(main_page, event_cb);
+  } else if(s == INIT) {
+      last_press = 0;
   }
 }

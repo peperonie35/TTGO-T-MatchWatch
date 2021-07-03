@@ -43,9 +43,9 @@ void light_sleep_basic_in() {
     Serial.print("\nEntering light sleep basic");
    
     current_app(DELETE);
-    current_app = &appClock;
-    defaultAppSwaperCurrentAppXPosition = 0;
-    defaultAppSwaperCurrentAppYPosition = 0;
+    current_app = get_app_by_name(defaultAppName).app_ptr;
+    defaultAppSwaperCurrentAppXPosition = get_app_x_position_by_name(defaultAppName);
+    defaultAppSwaperCurrentAppYPosition = get_app_y_position_by_name(defaultAppName);
 
     ttgo->closeBL();
     ttgo->stopLvglTick();

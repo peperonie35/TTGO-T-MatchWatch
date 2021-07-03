@@ -14,7 +14,17 @@ static void set_default_style() {
   lv_style_init(current_style);
   lv_style_set_bg_color(current_style, LV_STATE_DEFAULT, LV_COLOR_BLACK);
   lv_style_set_text_color(current_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-  lv_style_set_border_color(current_style, LV_STATE_DEFAULT, LV_COLOR_GRAY);
+  lv_style_set_border_color(current_style, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+  
+  lv_style_set_bg_color(current_style, LV_STATE_PRESSED, LV_COLOR_BLACK);
+  lv_style_set_text_color(current_style, LV_STATE_PRESSED, LV_COLOR_BLACK);
+  lv_style_set_border_color(current_style, LV_STATE_PRESSED, LV_COLOR_BLACK);
+
+  lv_style_set_bg_color(current_style, LV_STATE_FOCUSED, LV_COLOR_BLACK);
+  lv_style_set_text_color(current_style, LV_STATE_FOCUSED, LV_COLOR_BLUE);
+  lv_style_set_border_color(current_style, LV_STATE_FOCUSED, LV_COLOR_BLACK);
+
+  lv_obj_add_style(lv_scr_act(), LV_OBJ_PART_MAIN, current_style);
 }
 
 static void setup_lvgl() {

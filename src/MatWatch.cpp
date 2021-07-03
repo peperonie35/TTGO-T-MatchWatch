@@ -101,14 +101,14 @@ void setup() {
 
   init_touch();
   
-  current_app(AppState::INIT); // init the default app
-  
   m_idle(); //reset last_activity to prevent screensaver_timeout at startup
 
   //calling the setup for all apps
   for(App app : Applications) {
     app.app_ptr(SETUP);
   }
+
+  current_app(AppState::INIT); // init the default app
 
   start_ble_task();
 

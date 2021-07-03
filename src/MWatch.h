@@ -87,8 +87,9 @@ enum SWIPE_DIR { NODIR = 31, UP, DOWN, LEFT, RIGHT, CWCIRCLE, CCWCIRCLE };
 
 //applications functions (default way to make an application is to make a function with an AppState as argument (the app function is called with  enum AppState depending on the current state that the app needs to be (read an "application".cpp to understand) ))
 void appClock(AppState); //defaults app displays the time and betterie %
+void appClock2(AppState);
 void appBattery(AppState); //displays informations about the power manager
-void appBasicRequest(AppState); // not used in the program, I use it to test some stuff
+void appTest(AppState); // not used in the program, I use it to test some stuff
 void appCalc(AppState); // calculatrice
 void appStopWatch(AppState); // stop watch app
 void appWifiRemote(AppState s); // remote with use wifi to operate (calls api)
@@ -96,6 +97,9 @@ void appSettings(AppState s); // app to modify the settings (uses LVGL)
 
 void changeCurrentApp(String appName); //changes the current app
 void changeCurrentApp(void(*new_app)(AppState)); //changes the current app
+int get_app_x_position_by_name(String app_name);
+int get_app_y_position_by_name(String app_name);
+App get_app_by_name(String name);
 
 void handle_wifi_for_app(AppState s, bool need_wifi); //handles wifi for an app(needs to be called at the start of the app func), set need_wifi depending on when the app need wifi to preserve batterie, calls current_app(WIFI_CONNECTED) when everything is ready to use internet, calls current_app(WIFI_NO_AVAILABLE) when there is no registered ap nearby
 void handle_lvgl_for_app(AppState s, lv_obj_t *page, bool disable_default_gesture, bool enable_default_app_swipe); //use when you want to use lvgl in an app (call at the start of the app func), give a ptr to the root lv_obj_t (hidden at app DELETE, showed at app INIT),set disable_default_gesture to true to allow lvgl to use touch, set enable_default_app_swipe to true to enable app swipe depending on the gesture as normal
@@ -160,6 +164,7 @@ void screen_off_sleep_basic_out();
 //config values
 #ifdef __MAIN__
 EXTERN std::string watch_name = "MatWatch";
+EXTERN String defaultAppName = "Clock App";
 EXTERN uint8_t screen_brightness = 255;
 EXTERN uint32_t m_tz = TZ_CET;
 EXTERN void (*current_app)(AppState) = &appClock;
@@ -179,7 +184,7 @@ EXTERN int defaultAppSwaperAppPositionsXmax = MAX_NB_X_APPSWAPER - 1;
 EXTERN int defaultAppSwaperAppPositionsYmax = MAX_NB_Y_APPSWAPER - 1;
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
   {"Clock App", "Settings App"},
-  {"Battery App", "StopWatch App"},
+  {"Clock2 App", "StopWatch App"},
   {"WifiRemote App", "Calc App"}
  };
 EXTERN int defaultAppSwaperCurrentAppXPosition = 0;
@@ -191,6 +196,7 @@ EXTERN BLEUUID charUUID = BLEUUID::fromString("d3bde760-c538-11ea-8b6e-0800200c9
 #endif
 #ifndef __MAIN__
 EXTERN std::string watch_name;
+EXTERN String defaultAppName;
 EXTERN uint8_t screen_brightness;
 EXTERN uint32_t m_tz;
 EXTERN void (*current_app)(AppState);
@@ -211,17 +217,18 @@ EXTERN BLEUUID serviceUUID;
 EXTERN BLEUUID charUUID;
 #endif
 
-#define NB_APP 7
+#define NB_APP 8
 EXTERN App Applications[NB_APP]
 #ifdef __MAIN__
 = {
-  { "Clock App", &appClock },
+  { "Clock App", &appClock},
   { "Battery App", &appBattery},
-  { "BasicRequest App", &appBasicRequest},
+  { "Test App", &appTest},
   { "Calc App", &appCalc},
   { "StopWatch App", &appStopWatch},
   { "WifiRemote App", &appWifiRemote},
-  { "Settings App", &appSettings}
+  { "Settings App", &appSettings},
+  { "Clock2 App", &appClock2}
 }
 #endif
 ;

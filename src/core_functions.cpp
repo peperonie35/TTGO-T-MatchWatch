@@ -26,6 +26,37 @@ void bright_check (void) {
   }
 }
 
+App get_app_by_name(String name) {
+  for(App app: Applications) {
+    if(app.appName == name) {
+      return app;
+    }
+  }
+  return App();
+}
+
+int get_app_x_position_by_name(String app_name) {
+  for(int i = 0; i < MAX_NB_X_APPSWAPER; i ++) {
+    for(int k = 0; k < MAX_NB_Y_APPSWAPER; k ++) {
+      if(defaultAppSwaperAppPositions[i][k] == app_name) {
+        return i;
+      }
+    }
+  }
+  return 0;
+}
+
+int get_app_y_position_by_name(String app_name) {
+  for(int i = 0; i < MAX_NB_X_APPSWAPER; i ++) {
+    for(int k = 0; k < MAX_NB_Y_APPSWAPER; k ++) {
+      if(defaultAppSwaperAppPositions[i][k] == app_name) {
+        return k;
+      }
+    }
+  }
+  return 0;
+}
+
 //update last_activity and screen brightness, call this to prevent watch from going to light sleep
 void m_idle(void) {
   last_activity = millis();
