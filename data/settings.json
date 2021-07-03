@@ -1,0 +1,37 @@
+{
+    "sleep_mode": "light_sleep_basic",
+    "watch_name": "MatWatch",
+    "screen_brightness": 255,
+    "m_tz": 2730856407,
+    "screensaver_timeout": 5,
+    "serviceUUID": "d3bde760-c538-11ea-8b6e-0800200c9a66",
+    "charUUID": "d3bde760-c538-11ea-8b6e-0800200c9a67",
+    "AccessPoints": [
+        [
+            "ssid-1",
+            "password-1"
+        ],
+        [
+            "ssid-2",
+            "password-2"
+        ]
+    ],
+    "defaultAppSwaperAppPositions": [
+        [
+            "Clock2 App",
+            "Settings App",
+            "Clock2 App"
+        ],
+        [
+            "StopWatch App",
+            "Clock App",
+            "WifiRemote App"
+        ],
+        [
+            "Clock2 App",
+            "Calc App",
+            "Clock2 App"
+        ]
+    ],
+    "defaultAppName": "Clock App"
+}

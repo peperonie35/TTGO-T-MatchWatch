@@ -178,14 +178,14 @@ EXTERN AP AccessPoints[MAX_NB_AP] = {
   { "ssid-2", "password-2" }, // my phone hotspot
 };
 
-#define MAX_NB_X_APPSWAPER 3
-#define MAX_NB_Y_APPSWAPER 2
+#define MAX_NB_X_APPSWAPER 3 
+#define MAX_NB_Y_APPSWAPER 3
 EXTERN int defaultAppSwaperAppPositionsXmax = MAX_NB_X_APPSWAPER - 1;
 EXTERN int defaultAppSwaperAppPositionsYmax = MAX_NB_Y_APPSWAPER - 1;
-EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
-  {"Clock App", "Settings App"},
-  {"Clock2 App", "StopWatch App"},
-  {"WifiRemote App", "Calc App"}
+EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = { //warning x and y are reversed or not I don't really get how I made this, you better change it in the settings.json file
+  {"Clock2 App", "Settings App", "Clock2 App"},
+  {"StopWatch App", "Clock App", "WifiRemote App"},
+  {"Clock2 App", "Calc App", "Clock2 App"}
  };
 EXTERN int defaultAppSwaperCurrentAppXPosition = 0;
 EXTERN int defaultAppSwaperCurrentAppYPosition = 0;
