@@ -31,7 +31,7 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 
 4-make sure to install the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPClient
 
-5-build and send the filesystem image and then send the code to the esp32 (otherwise some bugs could appear for some reasons)
+5-after changing your settings in data/settings.json build and send the filesystem image and then send the code to the esp32 (not mandatory thought, you can change settings in the watch or in the MWatch.h file)
 
 <h2>How to use ?</h2>
 
