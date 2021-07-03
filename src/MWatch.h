@@ -172,23 +172,21 @@ EXTERN void (*current_gesture_handler)(int) = &defaultAppSwaperGestureHandler;
 EXTERN int menu_press_mode = 16;
 EXTERN uint8_t on_battery_screen_brightness = 100;
 EXTERN uint8_t screensaver_timeout = 5;
-#define MAX_NB_AP 2
+#define MAX_NB_AP 2 //don't forget to change this in the ifndef __MAIN__ part
 EXTERN AP AccessPoints[MAX_NB_AP] = {
   { "ssid-1", "password-1"},    // Home hotspot
   { "ssid-2", "password-2" }, // my phone hotspot
 };
 
-#define MAX_NB_X_APPSWAPER 3 
-#define MAX_NB_Y_APPSWAPER 3
-EXTERN int defaultAppSwaperAppPositionsXmax = MAX_NB_X_APPSWAPER - 1;
-EXTERN int defaultAppSwaperAppPositionsYmax = MAX_NB_Y_APPSWAPER - 1;
-EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = { //warning x and y are reversed or not I don't really get how I made this, you better change it in the settings.json file
-  {"Clock2 App", "Settings App", "Clock2 App"},
-  {"StopWatch App", "Clock App", "WifiRemote App"},
-  {"Clock2 App", "Calc App", "Clock2 App"}
+#define MAX_NB_X_APPSWAPER 3 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
+#define MAX_NB_Y_APPSWAPER 3 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
+EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
+  {"", "WifiRemote App", ""},
+  {"Calc App", "Clock App", "Settings App"},
+  {"", "StopWatch App", ""}
  };
-EXTERN int defaultAppSwaperCurrentAppXPosition = 0;
-EXTERN int defaultAppSwaperCurrentAppYPosition = 0;
+EXTERN int defaultAppSwaperCurrentAppXPosition = 1;
+EXTERN int defaultAppSwaperCurrentAppYPosition = 1;
 
 EXTERN BLEUUID serviceUUID = BLEUUID::fromString("d3bde760-c538-11ea-8b6e-0800200c9a66");
 EXTERN BLEUUID charUUID = BLEUUID::fromString("d3bde760-c538-11ea-8b6e-0800200c9a67");
@@ -206,10 +204,8 @@ EXTERN uint8_t on_battery_screen_brightness;
 EXTERN uint8_t screensaver_timeout;
 #define MAX_NB_AP 2
 EXTERN AP AccessPoints[MAX_NB_AP];
-EXTERN int defaultAppSwaperAppPositionsXmax;
-EXTERN int defaultAppSwaperAppPositionsYmax;
 #define MAX_NB_X_APPSWAPER 3
-#define MAX_NB_Y_APPSWAPER 2
+#define MAX_NB_Y_APPSWAPER 3
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER];
 EXTERN int defaultAppSwaperCurrentAppXPosition;
 EXTERN int defaultAppSwaperCurrentAppYPosition;

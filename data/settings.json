@@ -6,6 +6,7 @@
     "screensaver_timeout": 5,
     "serviceUUID": "d3bde760-c538-11ea-8b6e-0800200c9a66",
     "charUUID": "d3bde760-c538-11ea-8b6e-0800200c9a67",
+    "defaultAppName": "Clock App",
     "AccessPoints": [
         [
             "ssid-1",
@@ -18,20 +19,19 @@
     ],
     "defaultAppSwaperAppPositions": [
         [
-            "Clock2 App",
-            "Settings App",
-            "Clock2 App"
+            "",
+            "WifiRemote App",
+            ""
         ],
         [
-            "StopWatch App",
-            "Clock App",
-            "WifiRemote App"
-        ],
-        [
-            "Clock2 App",
             "Calc App",
-            "Clock2 App"
+            "Clock App",
+            "Settings App"
+        ],
+        [
+            "",
+            "StopWatch App",
+            ""
         ]
-    ],
-    "defaultAppName": "Clock App"
+    ]
 }

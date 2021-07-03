@@ -64,20 +64,19 @@ void defaultAppSwaperGestureHandler(int mSelect) {
       return;
     }
   } else if (mSelect == UP) {
-    if(defaultAppSwaperCurrentAppXPosition != defaultAppSwaperAppPositionsXmax) {
+    if(defaultAppSwaperCurrentAppXPosition != MAX_NB_X_APPSWAPER-1) {
       defaultAppSwaperCurrentAppXPosition += 1;
     } else {
       return;
     }
-  }
-  else if (mSelect == RIGHT) {
+  } else if (mSelect == RIGHT) {
     if(defaultAppSwaperCurrentAppYPosition != 0) {
       defaultAppSwaperCurrentAppYPosition = defaultAppSwaperCurrentAppYPosition - 1;
     } else {
       return;
     }
   } else if (mSelect == LEFT) {
-    if(defaultAppSwaperCurrentAppYPosition != defaultAppSwaperAppPositionsYmax) {
+    if(defaultAppSwaperCurrentAppYPosition != MAX_NB_Y_APPSWAPER-1) {
       defaultAppSwaperCurrentAppYPosition += 1;
     } else {
       return;
