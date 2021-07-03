@@ -19,6 +19,8 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 
 4-open it with platform.io in visual studio code.
 
+5-after changing your settings in data/settings.json build and send the filesystem image and then send the code to the esp32 (not mandatory thought, you can change settings in the watch or in the MWatch.h file)
+
 <h3>ARDUINO IDE:</h3>
 
 1-download the project source code
@@ -28,6 +30,8 @@ It uses the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPC
 3-open with the arduino IDE.
 
 4-make sure to install the following libraries: TTGO TWatch Library, ArduinoJson, AceTime, NTPClient
+
+5-build and send the filesystem image and then send the code to the esp32 (otherwise some bugs could appear for some reasons)
 
 <h2>How to use ?</h2>
 
