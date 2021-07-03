@@ -58,3 +58,7 @@ apps: stop watch app, wifi remote app, calc app, battery info app, settings app
 <h2>I plan to add:</h2>
 
 Alarm to wake me up (didn't start working on that)
+
+<h2>Known issues that I probably will never fix</h2>
+
+Somtimes the appWifiRemote crashes with error "Cache disabled but cached memory region accessed", it seems related to touch feature (in the trace)
