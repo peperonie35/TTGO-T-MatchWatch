@@ -178,12 +178,14 @@ EXTERN AP AccessPoints[MAX_NB_AP] = {
   { "ssid-2", "password-2" }, // my phone hotspot
 };
 
-#define MAX_NB_X_APPSWAPER 3 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
-#define MAX_NB_Y_APPSWAPER 3 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
+#define MAX_NB_X_APPSWAPER 5 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
+#define MAX_NB_Y_APPSWAPER 5 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
-  {"", "WifiRemote App", ""},
-  {"Calc App", "Clock App", "Settings App"},
-  {"", "StopWatch App", ""}
+  {"/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT"},
+  {"/GO_DEFAULT", "/GO_DEFAULT", "WifiRemote App", "/GO_DEFAULT", "/GO_DEFAULT"},
+  {"/GO_DEFAULT", "Calc App", "Clock App", "Settings App", "/GO_DEFAULT"},
+  {"/GO_DEFAULT", "/GO_DEFAULT", "StopWatch App", "/GO_DEFAULT", "/GO_DEFAULT"},
+  {"/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT"}
  };
 EXTERN int defaultAppSwaperCurrentAppXPosition = 1;
 EXTERN int defaultAppSwaperCurrentAppYPosition = 1;
@@ -204,8 +206,8 @@ EXTERN uint8_t on_battery_screen_brightness;
 EXTERN uint8_t screensaver_timeout;
 #define MAX_NB_AP 2
 EXTERN AP AccessPoints[MAX_NB_AP];
-#define MAX_NB_X_APPSWAPER 3
-#define MAX_NB_Y_APPSWAPER 3
+#define MAX_NB_X_APPSWAPER 5
+#define MAX_NB_Y_APPSWAPER 5
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER];
 EXTERN int defaultAppSwaperCurrentAppXPosition;
 EXTERN int defaultAppSwaperCurrentAppYPosition;

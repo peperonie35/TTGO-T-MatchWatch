@@ -4,6 +4,7 @@
 #include "lvgl_declare.h"
 
 static lv_obj_t *main_page;
+static lv_obj_t *sub_app_1_page;
 
 #define VAR_X 16
 #define CHAR_SPACE 36
@@ -39,8 +40,8 @@ static void change_num(lv_obj_t *img, int num) {
   }
 }
 
+static int old_mm = 69;
 static void update_time(int hh, int mm, int ss) {
-  static int old_mm;
   if(old_mm != mm) {
     old_mm = mm;
     change_num(hours_dec, hh/10);
@@ -72,7 +73,7 @@ static void setup_main_page(bool hidden = true) {
   main_page = lv_obj_create(lv_scr_act(), NULL);
   lv_obj_add_style(main_page, LV_OBJ_PART_MAIN, get_lvgl_style());
   lv_obj_set_size(main_page, 240, 240);
-  lv_obj_align(main_page, NULL, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(main_page, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
 
   hours_dec = lv_img_create(main_page, NULL);
   lv_obj_align(hours_dec, main_page, LV_ALIGN_CENTER, -(2*CHAR_SPACE) + VAR_X, 0);
@@ -115,16 +116,67 @@ static void setup_main_page(bool hidden = true) {
   lv_obj_set_hidden(main_page, hidden);
 }
 
+
+static void setup_sub_app_1_page(bool hidden = true) {
+  if(sub_app_1_page != nullptr) {
+    lv_obj_del(sub_app_1_page);
+  }
+
+  sub_app_1_page = lv_obj_create(lv_scr_act(), NULL);
+  lv_obj_add_style(sub_app_1_page, LV_OBJ_PART_MAIN, get_lvgl_style());
+  lv_obj_set_size(sub_app_1_page, 240, 240);
+  lv_obj_align(sub_app_1_page, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+
+  lv_obj_t *test_label = lv_label_create(sub_app_1_page, NULL);
+  lv_obj_align(test_label, sub_app_1_page, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+  lv_obj_add_style(test_label, LV_LABEL_PART_MAIN, get_lvgl_style());
+  lv_obj_set_style_local_text_font(test_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+  lv_label_set_text(test_label, "Ble informations\nwill appear here");
+
+  lv_obj_set_hidden(sub_app_1_page, hidden);
+}
+
+static void(*func_to_run_on_main_thread)() = nullptr; //to avoid crashes
 static uint32_t last_press = 0;
 
-static void event_cb(lv_obj_t *obj, lv_event_t event) {
-    if(event == LV_EVENT_PRESSED) {
-        m_idle();
-        if(millis() - last_press < 500) {
-            
-        }
-        last_press = millis();
+static void sub_app_1_event_cb(lv_obj_t *obj, lv_event_t event) {
+  if(event == LV_EVENT_PRESSED) {
+    m_idle();
+    if(millis() - last_press < 500) {
+      func_to_run_on_main_thread = [](){
+        unstack_app();
+      };
     }
+    last_press = millis();
+  }
+}
+
+static void sub_app_1(AppState s) {
+  handle_lvgl_for_app(s, sub_app_1_page, true, true);
+  if(s == HANDLE) {
+    m_idle();
+    if(func_to_run_on_main_thread != nullptr) {
+      func_to_run_on_main_thread();
+      func_to_run_on_main_thread = nullptr;
+    }
+  } else if(s == SETUP) {
+    setup_sub_app_1_page();
+    lv_obj_set_event_cb(sub_app_1_page, sub_app_1_event_cb); //before setup, impotant
+  } else if (s == INIT) {
+    last_press = 0;
+  }
+}
+
+static void main_page_event_cb(lv_obj_t *obj, lv_event_t event) {
+  if(event == LV_EVENT_PRESSED) {
+    m_idle();
+    if(millis() - last_press < 500) {
+      func_to_run_on_main_thread = [](){
+        stack_app(sub_app_1);
+      };
+    }
+    last_press = millis();
+  }
 }
 
 void appClock(AppState s) {
@@ -133,10 +185,15 @@ void appClock(AppState s) {
     Date tt = getDate(m_tz);
     update_time(tt.hh, tt.mm, tt.ss);
     update_batterie_indicator();
+    if(func_to_run_on_main_thread != nullptr) {
+      func_to_run_on_main_thread();
+      func_to_run_on_main_thread = nullptr;
+    }
   } else if(s == SETUP) {
     setup_main_page();
-    lv_obj_set_event_cb(main_page, event_cb);
+    lv_obj_set_event_cb(main_page, main_page_event_cb); //before setup, impotant
+    sub_app_1(SETUP);
   } else if(s == INIT) {
-      last_press = 0;
+    last_press = 0;
   }
 }

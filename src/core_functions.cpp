@@ -105,6 +105,13 @@ void changeCurrentApp(void(*new_app)(AppState)) {
 
 //change the current application
 void changeCurrentApp(String appName) {
+  if(appName == "" || appName == "/GO_DEFAULT") {
+    Serial.print("switching app to default app");
+    defaultAppSwaperCurrentAppXPosition = get_app_x_position_by_name(defaultAppName);
+    defaultAppSwaperCurrentAppYPosition = get_app_y_position_by_name(defaultAppName);
+    changeCurrentApp(defaultAppName);
+    return;
+  }
   void(*new_app)(AppState) = current_app;
   for (int i = 0; i < NB_APP; i ++) {
     if (Applications[i].appName == appName) {

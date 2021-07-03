@@ -53,8 +53,8 @@ void displayElapsedTime(uint16_t color_f, uint16_t color_b) {
 }
 
 void appStopWatch(AppState s) {
-    m_idle(); // disable auto sleep
     if(s == HANDLE) {
+        m_idle(); // disable auto sleep
         if(last_gesture == 6) {
             if(!running) {
                 running = true;

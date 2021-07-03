@@ -367,6 +367,6 @@ void appSettings(AppState s) {
       setup_menu_ble();
       setup_menu_ble_test();
     } else if(s == INIT) {
-      delay(100);
+      delay(100); // to avoid any undesired button presses
     }
 }
