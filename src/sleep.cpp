@@ -4,6 +4,7 @@
 #include <WiFi.h>
 
 void deep_sleep_basic_in() {
+    ttgo->power->clearIRQ();
     ttgo->displaySleep();
     ttgo->powerOff();
     esp_sleep_enable_ext0_wakeup((gpio_num_t)AXP202_INT, LOW);
