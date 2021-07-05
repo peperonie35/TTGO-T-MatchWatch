@@ -30,7 +30,7 @@ void setup() {
 
   Serial.begin(115200);
 
-  Serial.print("\nbooting MWatch . . . ");
+  Serial.printf("\nbooting MWatch . . . %d", millis());
 
   //EEPROM.begin(EPPROM_SIZE);
   if (!SPIFFS.begin(true)) {
@@ -41,7 +41,7 @@ void setup() {
   read_settings();
 
   pinMode(4, OUTPUT);
-  quickBuzz();
+  //quickBuzz();
 
   //Create a program that allows the required message objects and group flags
   g_event_queue_handle = xQueueCreate(20, sizeof(uint8_t));
@@ -113,7 +113,7 @@ void setup() {
   start_ble_task();
 
   Serial.println();
-  Serial.print("Setup finished");
+  Serial.printf("Setup finished %d", millis());
 
   watch_on = true;
 }

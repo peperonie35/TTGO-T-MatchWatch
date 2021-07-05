@@ -23,8 +23,7 @@ void enable_touch_features() {
 }
 
 //called by void setup
-void init_touch() {
-}
+void init_touch() {/*nothing here yet */}
 
 //allow to change the current app, but swiping right will go back to the previous app
 void stack_app(void (*app_to_stack)(AppState)) {
