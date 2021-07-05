@@ -21,6 +21,9 @@ static void menu_ble_test_app(AppState);
 static lv_obj_t *menu_ble_page;
 static void menu_ble_app(AppState);
 
+static lv_obj_t *menu_power_page;
+static void menu_power_app(AppState);
+
 //warning if you want more than 6 menus, you must turn handle_lvgl_for_app(s, page, true, true); to handle_lvgl_for_app(s, page, true, false); (to desactivate the app swaper) or reduce button height
 #define NB_SETTINGS_BUTTONS_STR 6
 static const char *settings_buttons_str[NB_SETTINGS_BUTTONS_STR] = {
@@ -28,8 +31,8 @@ static const char *settings_buttons_str[NB_SETTINGS_BUTTONS_STR] = {
   "time",
   "BLE",
   "WiFi",
-  "commit settings changes",
-  "restart watch"
+  "power",
+  "commit settings changes"
 };
 
 
@@ -38,15 +41,15 @@ static void btn_event_handler(lv_obj_t *obj, lv_event_t event) {
     for(int i = 0; i < NB_SETTINGS_BUTTONS_STR; i ++) {
       if(String(settings_buttons_str[i]) == String(lv_list_get_btn_text(obj))) {
         Serial.println();
-        Serial.print("[SETTINGS] going into " + String(settings_buttons_str[i]) + " menu");
+        Serial.print("[SETTINGS] menu pressed: " + String(settings_buttons_str[i]) + " menu");
         if(String(settings_buttons_str[i]) == "screen") {
           stack_app(menu_screen_app);
         } else if(String(settings_buttons_str[i]) == "time") {
           stack_app(menu_time_app);
         } else if(String(settings_buttons_str[i]) == "commit settings changes") {
           write_settings();
-        } else if(String(settings_buttons_str[i]) == "restart watch") {
-          ESP.restart();
+        } else if(String(settings_buttons_str[i]) == "power") {
+          stack_app(menu_power_app);
         } else if(String(settings_buttons_str[i]) == "BLE") {
           stack_app(menu_ble_app);
         }
@@ -304,6 +307,58 @@ static void setup_menu_ble_test(bool hidden = true) {
   lv_obj_set_hidden(menu_ble_test_page, hidden);
 }
 
+static void setup_menu_power(bool hidden = true) {
+  if(menu_power_page != nullptr) {
+    lv_obj_del(menu_power_page);
+  }
+
+  menu_power_page = lv_list_create(lv_scr_act(), NULL);
+  lv_obj_add_style(menu_power_page, LV_OBJ_PART_MAIN, get_lvgl_style());
+  lv_obj_set_size(menu_power_page, 240, 240);
+  lv_obj_align(menu_power_page, NULL, LV_ALIGN_CENTER, 0, 0);
+
+  lv_obj_t *some_button;
+
+  some_button = lv_list_add_btn(menu_power_page, NULL, "restart watch");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      ESP.restart();
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+
+  String s_m_t_disp = "sleep mode: DEFAULT";
+  if(json_settings["sleep_mode"].is<String>()) {
+    s_m_t_disp = String("sleep mode: ") + json_settings["sleep_mode"].as<String>();
+  }
+  some_button = lv_list_add_btn(menu_power_page, NULL, s_m_t_disp.c_str());
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+  
+  some_button = lv_list_add_btn(menu_power_page, NULL, "next sleep mode");
+  lv_obj_set_event_cb(some_button, [](lv_obj_t *obj, lv_event_t event){
+    if(event == LV_EVENT_CLICKED) {
+      if(!json_settings["sleep_mode"].is<String>()) {
+        json_settings["sleep_mode"] = "light_sleep_basic";
+      }
+      bool next_is_the_one = false;
+      for(String mode : SLEEP_MODES) {
+        if(next_is_the_one) {
+          json_settings["sleep_mode"] = mode;
+          break;
+        }
+        if(mode == json_settings["sleep_mode"].as<String>()) {
+          next_is_the_one = true;
+        }
+      }
+      setup_menu_power(false);
+    }
+  });
+  lv_obj_add_style(some_button, LV_BTN_PART_MAIN, get_lvgl_style());
+  
+
+  lv_obj_set_hidden(menu_power_page, hidden);
+}
+
 static void menu_time_app(AppState s) {
   handle_wifi_for_app(s, m_need_wifi);
   handle_lvgl_for_app(s, menu_time_page, true, true);
@@ -349,6 +404,13 @@ static void menu_ble_test_app(AppState s) {
   }
 }
 
+static void menu_power_app(AppState s) {
+  handle_lvgl_for_app(s, menu_power_page, true, true);
+  if(s == HANDLE) {
+    m_idle();
+  }
+}
+
 
 static void menu_ble_app(AppState s) {
   handle_lvgl_for_app(s, menu_ble_page, true, true);
@@ -356,6 +418,7 @@ static void menu_ble_app(AppState s) {
     m_idle();
   }
 }
+
 void appSettings(AppState s) {
     handle_lvgl_for_app(s, main_page, true, true);
     if(s == HANDLE) {
@@ -366,6 +429,7 @@ void appSettings(AppState s) {
       setup_menu_time();
       setup_menu_ble();
       setup_menu_ble_test();
+      setup_menu_power();
     } else if(s == INIT) {
       delay(100); // to avoid any undesired button presses
     }

@@ -85,6 +85,8 @@ struct Date {
 
 enum SWIPE_DIR { NODIR = 31, UP, DOWN, LEFT, RIGHT, CWCIRCLE, CCWCIRCLE };
 
+#define SLEEP_MODES {"screen_off_sleep_basic", "light_sleep_basic", "deep_sleep_basic", "screen_off_sleep_basic"} //first sleep mode shall be placed last too (easier to change modes then)
+
 //applications functions (default way to make an application is to make a function with an AppState as argument (the app function is called with  enum AppState depending on the current state that the app needs to be (read an "application".cpp to understand) ))
 void appClock(AppState); //defaults app displays the time and betterie %
 void appClock2(AppState);
