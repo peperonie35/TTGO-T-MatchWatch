@@ -6,6 +6,10 @@
 static lv_obj_t *main_page;
 static lv_obj_t *sub_app_1_page;
 
+static const char *media_control_button_matrix[] = {LV_SYMBOL_PREV, LV_SYMBOL_PLAY, LV_SYMBOL_NEXT};
+static lv_obj_t *media_control_buttons;
+static bool media_buttons_hidden = true;
+
 #define VAR_X 16
 #define CHAR_SPACE 36
 static lv_obj_t *hours_dec;
@@ -113,6 +117,28 @@ static void setup_main_page(bool hidden = true) {
   lv_obj_set_style_local_text_color(batterie_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_DARKGRAY);
   lv_obj_set_style_local_text_color(batterie_label, LV_LABEL_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_DARKGRAY);
 
+  media_control_buttons = lv_btnmatrix_create(main_page, NULL);
+  lv_obj_set_size(media_control_buttons, 160, 40);
+  lv_obj_align(media_control_buttons, main_page, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+  lv_obj_add_style(media_control_buttons, LV_BTNMATRIX_PART_BG, get_lvgl_style());
+  lv_obj_add_style(media_control_buttons, LV_BTNMATRIX_PART_BTN , get_lvgl_style());
+  lv_btnmatrix_set_map(media_control_buttons, media_control_button_matrix);
+  lv_obj_set_hidden(media_control_buttons, media_buttons_hidden);
+  lv_obj_set_event_cb(media_control_buttons, [](lv_obj_t * obj, lv_event_t event){
+    if(event == LV_EVENT_VALUE_CHANGED) {
+      const char * txt = lv_btnmatrix_get_active_btn_text(obj);
+      if(txt == LV_SYMBOL_PLAY) {
+        add_ble_command("/play");
+      } else if(txt == LV_SYMBOL_PAUSE) {
+        add_ble_command("/pause");
+      } else if(txt == LV_SYMBOL_NEXT) {
+        add_ble_command("/nextSong");
+      } else if(txt == LV_SYMBOL_PREV) {
+        add_ble_command("/prevSong");
+      }
+    }
+  });
+
   lv_obj_set_hidden(main_page, hidden);
 }
 
@@ -179,9 +205,23 @@ static void main_page_event_cb(lv_obj_t *obj, lv_event_t event) {
   }
 }
 
+static void ble_data_cb(String command, String data) {
+  if(command == "isPlaying") {
+    if(data == "music_playing") {
+      media_control_button_matrix[1] = LV_SYMBOL_PAUSE;
+    } else if(data == "music_not_playing") {
+      media_control_button_matrix[1] = LV_SYMBOL_PLAY;
+    }
+  }
+}
+
 void appClock(AppState s) {
   handle_lvgl_for_app(s, main_page, true, true);
   if(s == HANDLE) {
+    if(media_buttons_hidden == is_ble_connected()) {
+      media_buttons_hidden = !media_buttons_hidden;
+      lv_obj_set_hidden(media_control_buttons, media_buttons_hidden);
+    }
     Date tt = getDate(m_tz);
     update_time(tt.hh, tt.mm, tt.ss);
     update_batterie_indicator();
@@ -191,7 +231,8 @@ void appClock(AppState s) {
     }
   } else if(s == SETUP) {
     setup_main_page();
-    lv_obj_set_event_cb(main_page, main_page_event_cb); //before setup, impotant
+    lv_obj_set_event_cb(main_page, main_page_event_cb); //after setup_main_page, impotant
+    add_ble_cb(ble_data_cb, "appClock ble cb");
     sub_app_1(SETUP);
   } else if(s == INIT) {
     last_press = 0;

@@ -15,7 +15,7 @@ BLEService * pService;
 BLECharacteristic *pCharacteristic;
 BLEAdvertising *pAdvertising;
 
-static bool connected;
+static bool connected = false;
 static std::vector<String> command_stack;
 static std::vector<String> result_command_satck;
 static std::vector<String> result_data_satck;
@@ -50,6 +50,10 @@ class cbChar : public BLECharacteristicCallbacks
     //nothing to do
   }
 };
+
+bool is_ble_connected() {
+  return connected;
+}
 
 void add_ble_cb(void(*cb)(String command, String data), String cb_name) {
   ble_cb_func_stack.push_back(cb);

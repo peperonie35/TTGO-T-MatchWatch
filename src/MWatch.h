@@ -147,6 +147,8 @@ void write_settings();
 void write_file_string(String path, String &data);
 String read_file_string(String path);
 
+
+bool is_ble_connected();
 void start_ble_task();
 void stop_ble_task();
 void enable_ble();
