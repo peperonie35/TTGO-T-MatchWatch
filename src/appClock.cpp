@@ -52,7 +52,7 @@ static void update_time(int hh, int mm, int ss) {
   if(ss % 2) {
     lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_DARKGRAY);
   } else {
-    lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_NAVY);
+    lv_obj_set_style_local_image_recolor(separator, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_AQUA);
   }
 }
 
@@ -195,5 +195,7 @@ void appClock(AppState s) {
     sub_app_1(SETUP);
   } else if(s == INIT) {
     last_press = 0;
+    Date tt = getDate(m_tz);
+    update_time(tt.hh, tt.mm, tt.ss);
   }
 }
