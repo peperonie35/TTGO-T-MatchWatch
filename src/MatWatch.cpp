@@ -30,7 +30,7 @@ void setup() {
 
   Serial.begin(115200);
 
-  Serial.printf("\nbooting MWatch . . . %d", millis());
+  Serial.printf("\nbooting MWatch . . . %lu", millis());
 
   //EEPROM.begin(EPPROM_SIZE);
   if (!SPIFFS.begin(true)) {
@@ -113,7 +113,7 @@ void setup() {
   start_ble_task();
 
   Serial.println();
-  Serial.printf("Setup finished %d", millis());
+  Serial.printf("Setup finished %lu", millis());
 
   watch_on = true;
 }
