@@ -1,7 +1,7 @@
 # MatWatch
 This project is a software for the TTGO T-watch 2020 v1 (should also work for v2 and v3, but make sure to modify config.h)
 
-It is a sketch for the arduino library but offers easy ways to create new apps and features, it's very customisable
+It is a sketch for the arduino library but offers easy ways to create new apps with both lvgl and TFT_eSPI and features, it's very customisable
 
 I took bits from https://github.com/wfdudley/T-watch-2020 (I stole some functions and stuff)
 
