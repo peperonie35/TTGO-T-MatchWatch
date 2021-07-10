@@ -15,6 +15,12 @@ BLEService * pService;
 BLECharacteristic *pCharacteristic;
 BLEAdvertising *pAdvertising;
 
+#define NB_BLE_COMMAND_LOOP 2
+const char *ble_command_loop[NB_BLE_COMMAND_LOOP] = {
+  "/isMusicPlaying", "/getNotifications"
+};
+
+static uint32_t connection_start_time;
 static bool connected = false;
 static std::vector<String> command_stack;
 static std::vector<String> result_command_satck;
@@ -32,6 +38,7 @@ class cbServer : public BLEServerCallbacks
     pCharacteristic->setValue("NA");
     pCharacteristic->notify();
     Serial.print("\nConnected to device");
+    connection_start_time=millis();
   }
   void onDisconnect(BLEServer *server) {
     connected = false;
@@ -98,6 +105,17 @@ static void handle_on_write(String data) {
   }
 }
 
+
+static uint32_t last_handle_ble_command_loop_update = 0;
+static void handle_ble_command_loop() {
+  if(connected && command_stack.empty() && millis() - last_handle_ble_command_loop_update > 200) {
+    for(int i = 0; i < NB_BLE_COMMAND_LOOP; i ++) {
+      add_ble_command(ble_command_loop[i]);
+    }
+    last_handle_ble_command_loop_update = millis();
+  }
+}
+
 void xBLETask(void * pvParameters) {
   BLEDevice::init(watch_name);
   pServer = BLEDevice::createServer();
@@ -114,8 +132,9 @@ void xBLETask(void * pvParameters) {
   pAdvertising->start();
   while(1) {
     if(connected) {
+      handle_ble_command_loop();
       String value = pCharacteristic->getValue().c_str();
-      if(!command_stack.empty() && value == "NA" && working_command == "") {
+      if(!command_stack.empty() && value == "NA" && working_command == "" && millis() - connection_start_time > 1000) {
         working_command = command_stack.back();
         command_stack.pop_back();
         pCharacteristic->setValue(working_command.c_str());

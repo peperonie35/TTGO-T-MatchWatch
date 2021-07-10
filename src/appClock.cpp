@@ -206,11 +206,13 @@ static void main_page_event_cb(lv_obj_t *obj, lv_event_t event) {
 }
 
 static void ble_data_cb(String command, String data) {
-  if(command == "isPlaying") {
+  if(command == "/isMusicPlaying") {
     if(data == "music_playing") {
       media_control_button_matrix[1] = LV_SYMBOL_PAUSE;
+      lv_obj_set_hidden(media_control_buttons, false);
     } else if(data == "music_not_playing") {
       media_control_button_matrix[1] = LV_SYMBOL_PLAY;
+      lv_obj_set_hidden(media_control_buttons, false);
     }
   }
 }
@@ -231,7 +233,7 @@ void appClock(AppState s) {
     }
   } else if(s == SETUP) {
     setup_main_page();
-    lv_obj_set_event_cb(main_page, main_page_event_cb); //after setup_main_page, impotant
+    lv_obj_set_event_cb(main_page, main_page_event_cb); //set after setup_main_page, impotant !
     add_ble_cb(ble_data_cb, "appClock ble cb");
     sub_app_1(SETUP);
   } else if(s == INIT) {
