@@ -96,6 +96,7 @@ void appCalc(AppState); // calculatrice
 void appStopWatch(AppState); // stop watch app
 void appWifiRemote(AppState s); // remote with use wifi to operate (calls api)
 void appSettings(AppState s); // app to modify the settings (uses LVGL)
+void appPower4(AppState s);
 
 void changeCurrentApp(String appName); //changes the current app
 void changeCurrentApp(void(*new_app)(AppState)); //changes the current app
@@ -219,7 +220,7 @@ EXTERN BLEUUID serviceUUID;
 EXTERN BLEUUID charUUID;
 #endif
 
-#define NB_APP 8
+#define NB_APP 9
 EXTERN App Applications[NB_APP]
 #ifdef __MAIN__
 = {
@@ -230,7 +231,8 @@ EXTERN App Applications[NB_APP]
   { "StopWatch App", &appStopWatch},
   { "WifiRemote App", &appWifiRemote},
   { "Settings App", &appSettings},
-  { "Clock2 App", &appClock2}
+  { "Clock2 App", &appClock2},
+  { "Power4 App", &appPower4}
 }
 #endif
 ;
