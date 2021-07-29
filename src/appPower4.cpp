@@ -63,7 +63,7 @@ static void setup_playing_page(bool hidden = true) {
             playing_player = 1;
         }
 
-        //this is shit code but it works
+        //this is shit code but it works (idk how to do this in an other way)
 
         if(i == 0) {
             lv_obj_set_event_cb(b, [](lv_obj_t *obj, lv_event_t event){
