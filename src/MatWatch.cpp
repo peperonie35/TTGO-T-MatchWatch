@@ -176,10 +176,6 @@ void loop() {
 
 }
 
-
-
-
-
 //handle going in and out of low_energy state
 void low_energy (LEState) {
   if (watch_on) {
