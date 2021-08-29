@@ -96,7 +96,8 @@ void appCalc(AppState); // calculatrice
 void appStopWatch(AppState); // stop watch app
 void appWifiRemote(AppState s); // remote with use wifi to operate (calls api)
 void appSettings(AppState s); // app to modify the settings (uses LVGL)
-void appPower4(AppState s);
+void appPower4(AppState s); // power 4 game
+void appAlarmController(AppState s); // app to use the watch as my alarm controller for my alarm
 
 void changeCurrentApp(String appName); //changes the current app
 void changeCurrentApp(void(*new_app)(AppState)); //changes the current app
@@ -187,13 +188,16 @@ EXTERN AP AccessPoints[MAX_NB_AP] = {
 #define MAX_NB_Y_APPSWAPER 5 //don't forget to change this in the ifndef __MAIN__ part (see below), it took me 2h to figure it out, I'm depressed (Serial.print shows this value, but the program is using the other), don't make that mistake
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER] = {
   {"/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT"},
-  {"/GO_DEFAULT", "/GO_DEFAULT", "WifiRemote App", "/GO_DEFAULT", "/GO_DEFAULT"},
+  {"/GO_DEFAULT", "/GO_DEFAULT", "AlarmController App", "/GO_DEFAULT", "/GO_DEFAULT"},
   {"/GO_DEFAULT", "Calc App", "Clock App", "Settings App", "/GO_DEFAULT"},
   {"/GO_DEFAULT", "/GO_DEFAULT", "StopWatch App", "/GO_DEFAULT", "/GO_DEFAULT"},
   {"/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT", "/GO_DEFAULT"}
  };
 EXTERN int defaultAppSwaperCurrentAppXPosition = 1;
 EXTERN int defaultAppSwaperCurrentAppYPosition = 1;
+
+#define NB_APP_NO_RETURN 1
+EXTERN String apps_no_return[NB_APP_NO_RETURN] = {"AlarmController App"};
 
 EXTERN BLEUUID serviceUUID = BLEUUID::fromString("d3bde760-c538-11ea-8b6e-0800200c9a66");
 EXTERN BLEUUID charUUID = BLEUUID::fromString("d3bde760-c538-11ea-8b6e-0800200c9a67");
@@ -216,11 +220,15 @@ EXTERN AP AccessPoints[MAX_NB_AP];
 EXTERN String defaultAppSwaperAppPositions[MAX_NB_X_APPSWAPER][MAX_NB_Y_APPSWAPER];
 EXTERN int defaultAppSwaperCurrentAppXPosition;
 EXTERN int defaultAppSwaperCurrentAppYPosition;
+
+#define NB_APP_NO_RETURN 1
+EXTERN String apps_no_return[NB_APP_NO_RETURN];
+
 EXTERN BLEUUID serviceUUID;
 EXTERN BLEUUID charUUID;
 #endif
 
-#define NB_APP 9
+#define NB_APP 10
 EXTERN App Applications[NB_APP]
 #ifdef __MAIN__
 = {
@@ -232,7 +240,8 @@ EXTERN App Applications[NB_APP]
   { "WifiRemote App", &appWifiRemote},
   { "Settings App", &appSettings},
   { "Clock2 App", &appClock2},
-  { "Power4 App", &appPower4}
+  { "Power4 App", &appPower4},
+  { "AlarmController App", &appAlarmController}
 }
 #endif
 ;

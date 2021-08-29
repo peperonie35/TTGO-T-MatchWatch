@@ -5,6 +5,8 @@ static void (*lvgl_app_change_to_execute_on_main_thread)() = nullptr;
 static bool m_app_enabled = false;
 static lv_style_t *current_style = nullptr;
 
+static bool lv_gesture_on = false;
+
 lv_style_t* get_lvgl_style() {
   return current_style;
 }
@@ -32,7 +34,7 @@ static void setup_lvgl() {
 }
 
 static void event_cb_swipe(lv_obj_t *obj, lv_event_t e) {
-  if(!m_app_enabled) {
+  if(!m_app_enabled || !lv_gesture_on) {
     return;
   }
   if(e == LV_EVENT_GESTURE) {
@@ -56,6 +58,11 @@ void handle_lvgl_for_app(AppState s, lv_obj_t *page, bool disable_default_gestur
   if(s == HANDLE && m_app_enabled) {
     lv_task_handler();
   } else if (s==INIT) {
+    if(!enable_default_app_swipe) {
+      lv_gesture_on = false;
+    } else {
+      lv_gesture_on = true;
+    }
     lv_obj_set_hidden(page, false);
     m_app_enabled = true;
   } else if (s == DELETE) {

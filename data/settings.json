@@ -1,5 +1,6 @@
 {
-    "sleep_mode": "light_sleep_basic",
+    "sleep_mode": "deep_sleep_basic",
+    "alarmControllerPassword" : "1234",
     "watch_name": "MatWatch",
     "screen_brightness": 255,
     "m_tz": 2730856407,
@@ -9,7 +10,7 @@
     "AccessPoints": [
         [
             "ssid-1",
-            "password-1"
+            "ssid-2"
         ],
         [
             "ssid-2",
@@ -28,7 +29,7 @@
             "/GO_DEFAULT",
             "/GO_DEFAULT",
             "WifiRemote App",
-            "/GO_DEFAULT",
+            "AlarmController App",
             "/GO_DEFAULT"
         ],
         [

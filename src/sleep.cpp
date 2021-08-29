@@ -42,12 +42,20 @@ void light_sleep_basic_out() {
 void light_sleep_basic_in() {
 
     Serial.print("\nEntering light sleep basic");
-   
+    
+    bool skip_default = false;
+    for (int i = 0; i < NB_APP_NO_RETURN; i++)  {
+        if(get_app_by_name(apps_no_return[i]).app_ptr == current_app) {
+            skip_default = true;
+        }
+    }
     current_app(DELETE);
-    current_app = get_app_by_name(defaultAppName).app_ptr;
-    defaultAppSwaperCurrentAppXPosition = get_app_x_position_by_name(defaultAppName);
-    defaultAppSwaperCurrentAppYPosition = get_app_y_position_by_name(defaultAppName);
-
+    if(!skip_default) {
+        current_app = get_app_by_name(defaultAppName).app_ptr;
+        defaultAppSwaperCurrentAppXPosition = get_app_x_position_by_name(defaultAppName);
+        defaultAppSwaperCurrentAppYPosition = get_app_y_position_by_name(defaultAppName);
+    }
+    
     ttgo->closeBL();
     ttgo->stopLvglTick();
     ttgo->displaySleep();
